@@ -1,0 +1,7 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 本脚本运行时生成的备份（内容因机器而异，不应入库）
+ifeo_block_backup.json

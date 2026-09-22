@@ -121,7 +121,7 @@ Prefetch is **indirect** evidence. To **directly** prove the interception mechan
 
 Raw record in `evidence/ifeo-probe-log.txt`.
 
-> The value of this experiment: **not "I believe it would work", but "I made it try once and watched it fail"**. Every mechanism-level conclusion should be held to this standard.
+> The value of this experiment: **not "the author believed it would work", but "the author made it try once and watched it fail"**. Every mechanism-level conclusion should be held to this standard.
 
 ---
 

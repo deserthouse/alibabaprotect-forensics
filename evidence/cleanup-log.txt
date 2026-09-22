@@ -1,0 +1,132 @@
+=== 清理过程实录（脱敏）===
+
+保留原始执行输出，用于核对每一步的实际返回值和错误码。
+已剔除：与本组件无关的内容（其他软件的服务、系统内存统计、浏览器扩展图标等），
+        以及本机装有但未处理的其它阿里系客户端的版本信息。
+
+==========================================================================================
+---------- 一、主流程（备份 → 删服务 → 删驱动 → 删目录 → 核验）----------
+############ 阶段0 备份 ############
+  已备份 C:\Program Files (x86)\AlibabaProtect -> <工作目录>\archive\2026-09-22-alibaba-components\AlibabaProtect  (599 项)
+  已备份 C:\Program Files (x86)\alipay -> <工作目录>\archive\2026-09-22-alibaba-components\alipay  (38 项)
+  已导出注册表 HKLM\SOFTWARE\WOW6432Node\Alipay -> HKLM_SOFTWARE_WOW6432Node_Alipay.reg
+  已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect -> HKLM_SYSTEM_CurrentControlSet_Services_AlibabaProtect.reg
+  已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\pcas -> HKLM_SYSTEM_CurrentControlSet_Services_pcas.reg
+  已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\secbizsrv -> HKLM_SYSTEM_CurrentControlSet_Services_secbizsrv.reg
+  已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\AliPaladin -> HKLM_SYSTEM_CurrentControlSet_Services_AliPaladin.reg
+
+############ 阶段1 nuke AlibabaProtect ############
+--- 1a 禁用更新计划任务（先断自愈）---
+  ✅ 已禁用 AliProctectUpdate
+  ✅ 已禁用 AliUpdater
+--- 1b 停止并删除服务 AlibabaProtect ---
+  sc stop  : [SC] ControlService 失败 1052: /  / 请求的控件对此服务无效。 /
+  sc delete: [SC] DeleteService 成功
+--- 1c 结束进程 ---
+  ✅ 已结束 AlibabaProtect PID=6108
+--- 1d 删除内核驱动 AliPaladin ---
+  sc stop  : [SC] ControlService 失败 1062: /  / 服务尚未启动。 /
+  sc delete: [SC] DeleteService 成功
+  ⚠️ 驱动文件删除失败: [safe-delete][SAFE_DELETE_FAIL_CLOSED] {"target":"C:\\WINDOWS\\system32\\drivers\\AliPaladinEx64.sys","reason":"trash-failed","detail":"OK C:\\WINDOWS\\system32\\drivers\\AliPaladinEx64.sys"}
+--- 1e 删除目录 ---
+  仍存在 = False
+
+############ 阶段2 nuke 支付宝安全控件 ############
+--- 2a 停止并删除两个服务 ---
+  pcas stop  :  / SERVICE_NAME: pcas  /         TYPE               : 10  WIN32_OWN_PROCESS   /         STATE              : 3  STOP_PENDING  /                                 (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN) /         WIN32_EXIT_CODE    : 0  (0x0) /         SERVICE_EXIT_CODE  : 0  (0x0) /         CHECKPOINT         : 0x0 /         WAIT_HINT          : 0x0
+  pcas delete: [SC] DeleteService 成功
+  secbizsrv stop  :  / SERVICE_NAME: secbizsrv  /         TYPE               : 10  WIN32_OWN_PROCESS   /         STATE              : 3  STOP_PENDING  /                                 (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN) /         WIN32_EXIT_CODE    : 0  (0x0) /         SERVICE_EXIT_CODE  : 0  (0x0) /         CHECKPOINT         : 0x0 /         WAIT_HINT          : 0x0
+  secbizsrv delete: [SC] DeleteService 成功
+--- 2b 结束进程 ---
+  ✅ 已结束 secbizsrv PID=6408
+--- 2c 删除目录 ---
+  alipay 目录仍存在 = False
+--- 2d 清理注册表残留 ---
+  HKLM\SOFTWARE\WOW6432Node\Alipay 仍存在 = False
+
+############ 阶段3 核验 ############
+--- 进程 ---
+  AlibabaProtect    ✅ 未运行
+  pcas              ✅ 未运行
+  secbizsrv         ✅ 未运行
+  aliwssv           ✅ 未运行
+--- 服务 ---
+  AlibabaProtect    ✅ 已移除
+  pcas              ✅ 已移除
+  secbizsrv         ✅ 已移除
+  AliPaladin        ✅ 已移除
+--- 驱动 ---
+  AliPaladinEx64.sys 仍存在 = False
+--- 计划任务 ---
+  AliProctectUpdate = Disabled
+  AliUpdater = Disabled
+--- 目录 ---
+  C:\Program Files (x86)\AlibabaProtect 存在=False
+  C:\Program Files (x86)\alipay 存在=False
+  （本机保留未动的阿里系客户端：支付宝安全控件、阿里旺旺、淘宝桌面版 —— 版本信息略）
+
+---------- 二、收尾与最终核验（残留数据目录 / 卸载注册项 / 残留扫描）----------
+=== 收尾1 备份并删除两个残留数据目录 ===
+  已备份 C:\ProgramData\Alibaba\AlibabaProtectDT -> <工作目录>\archive\2026-09-22-alibaba-components\ProgramData_AlibabaProtectDT (22 项)
+    删除后仍存在 = False
+  已备份 C:\ProgramData\alipay -> <工作目录>\archive\2026-09-22-alibaba-components\ProgramData_alipay (7 项)
+    删除后仍存在 = False
+
+=== 收尾2 删除残留卸载注册项 ===
+  reg export 备份: 操作成功完成。 /
+  reg delete    : 操作成功完成。 /
+  删除后仍存在  = False
+
+=== 最终核验：残留扫描 ===
+  AlibabaProtect*    -> C:\Program Files (x86)\AliWangWang\10.03.39C\SafeGuard\AlibabaProtectCon.cfg ; C:\Program Files (x86)\AliWangWang\10.03.39C\SafeGuard\AlibabaProtectCon.exe ; C:\Users\<用户>\AppData\Local\Programs\taobao\resources\nsis\safe\AlibabaProtectCon.cfg ; C:\Users\<用户>\AppData\Local\Programs\taobao\resources\nsis\safe\AlibabaProtectCon.exe ; C:\Users\<用户>\AppData\Roaming\taobao\Plugins\WangWang\10.4.5\SafeGuard\AlibabaProtectCon.cfg ; C:\Users\<用户>\AppData\Roaming\taobao\Plugins\WangWang\10.4.5\SafeGuard\AlibabaProtectCon.exe
+  aliedit*           -> 无残留
+  AliPaladin*        -> 无残留
+
+=== 最终核验：进程 / 服务 / 任务 ===
+  进程 AlibabaProtect    ✅ 无
+  进程 pcas              ✅ 无
+  进程 secbizsrv         ✅ 无
+  进程 aliwssv           ✅ 无
+  服务 AlibabaProtect    ✅ 已移除
+  服务 pcas              ✅ 已移除
+  服务 secbizsrv         ✅ 已移除
+  服务 AliPaladin        ✅ 已移除
+  任务 AliProctectUpdate Disabled
+  任务 AliUpdater        Disabled
+
+  （本机保留未动的阿里系客户端：支付宝安全控件、阿里旺旺、淘宝桌面版 —— 版本信息略）
+=== 备份位置与内容 ===
+  <工作目录>\archive\2026-09-22-alibaba-components
+    AlibabaProtect
+    alipay
+    ProgramData_AlibabaProtectDT
+    ProgramData_alipay
+    HKLM_SOFTWARE_WOW6432Node_Alipay.reg
+    HKLM_SYSTEM_CurrentControlSet_Services_AlibabaProtect.reg
+    HKLM_SYSTEM_CurrentControlSet_Services_AliPaladin.reg
+    HKLM_SYSTEM_CurrentControlSet_Services_pcas.reg
+    HKLM_SYSTEM_CurrentControlSet_Services_secbizsrv.reg
+    uninstall_alieditplus.reg
+
+---------- 三、负面结果实验：服务注册表键加 Deny ACE（实测失败）----------
+
+  背景：社区做法是给服务注册表键加 SYSTEM Deny ACE 以阻止重新注册。
+  实测：初次拦截有效，但一旦调用 sc create 失败，SCM 回滚会连带删除该键。
+
+############ 补充2：给服务注册表键加 SYSTEM Deny ACE（防看门狗还原）############
+  AlibabaProtect 键不存在（将新建空键作为拦截桩）
+  AliPaladin 键不存在（将新建空键作为拦截桩）
+  已新建空键 AlibabaProtect
+  ✅ AlibabaProtect 已加 Deny ACE: NT AUTHORITY\SYSTEM=SetValue, CreateSubKey, Delete, ChangePermissions, TakeOwnership
+  已新建空键 AliPaladin
+  ✅ AliPaladin 已加 Deny ACE: NT AUTHORITY\SYSTEM=SetValue, CreateSubKey, Delete, ChangePermissions, TakeOwnership
+############ 功能验证：尝试真的注册该服务（应当失败）############
+  sc create AlibabaProtect -> exit=5 :: [SC] CreateService 失败 5:  拒绝访问。
+  sc create AliPaladin -> exit=5 :: [SC] CreateService 失败 5:  拒绝访问。
+  --- 复核：服务是否真的没被创建 ---
+    AlibabaProtect    ✅ 未创建（拦截生效）
+    AliPaladin        ✅ 未创建（拦截生效）
+############ 现状复核 ############
+  AlibabaProtect 进程: ✅ 无
+  IFEO 4 条: 4 条仍在
+

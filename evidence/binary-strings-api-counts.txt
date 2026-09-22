@@ -1,0 +1,70 @@
+=== 对安装目录内 27 个主要模块的字符串扫描（已剔除证书链噪声）===
+
+目标模块（部分）：AlibabaProtect.exe / FileScanner.dll / FileWatch.dll /
+  FileMonitor.dll / PathMon.dll / ProcessScanner.dll / perfmonsdk.dll /
+  WebServer.dll / WebGate.dll / WebUnion.dll / Report.dll / ServiceReport.dll /
+  Scheduler.dll / HealthCheck.dll / Update.dll / NetCore.dll / DBEngine.dll /
+  SignVerify.dll / BProtect.dll / PolicyRoute.dll / Slave.dll 等
+
+性质：仍是【静态能力】——字符串只能证明『代码里有这些调用』，
+      不能证明『运行时实际调用了』。
+
+==========================================================================================
+一、按类别统计的命中数
+==========================================================================================
+
+  接口路径 / API   共 0 条
+  完整 URL（非证书）   共 1 条
+  HTTP 头 / UA   共 31 条
+  设备/枚举接口   共 26 条
+  枚举类 API   共 61 条
+  网络上报 API   共 108 条
+  进程/内存 API   共 93 条
+  驱动通信   共 24 条
+
+==========================================================================================
+二、设备接口（用户态 ⇄ 内核驱动 的控制通道）
+==========================================================================================
+  \\.\CtrlSM
+
+  → 名字与控制面板/守护无关（CtrlSM ≠ 产品名），是另一个『不要按名字判断』的例子。
+  → 实用价值：它可用于确认驱动是否在工作（驱动未加载时打开该设备会失败）。
+
+==========================================================================================
+三、唯一命中『完整 URL』的字符串
+==========================================================================================
+  https://reverseengineering.stackexchange.com/questions/14171/thread-local-storage-access-on-
+      ← 出自 perfmonsdk.dll
+
+  解读（两种，都不指向恶意）：
+    1) 开发者把论坛讨论的代码片段直接复制进工程，连注释里的链接一起复制了；
+    2) 该 SDK 引用了某段公开代码，链接是出处标注。
+  ⇒ 可记录的事实是：perfmonsdk.dll 的代码来源不完全是自研，存在公开代码引用痕迹。
+
+==========================================================================================
+四、重要发现：没有明文的上报接口
+==========================================================================================
+  预期会出现的 /report、/collect、/upload 之类接口路径 —— 一条都没有（命中数 0）。
+  而 HTTPS 所需的 WinHttp* 等网络 API 却有 108 处。
+
+  ⇒ 结论只能是：上报地址不以明文存放在二进制里。
+     可能来自加密配置、运行时下发，或字符串变换。
+     ⚠️ 这本身不构成任何指控，只说明静态分析看不到通信目标。
+
+==========================================================================================
+五、注册表路径（含硬件指纹枚举的格式串）
+==========================================================================================
+
+  HKEY_USERS                                                                                       | WebUnion.dll
+  SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows                                             | BProtect.dll
+  SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon                                            | BProtect.dll
+  SYSTEM\CurrentControlSet\Control\Class\%s                                                        | WebServer.dll
+  SYSTEM\CurrentControlSet\Control\GroupOrderList                                                  | ReportEnv.dll
+  SYSTEM\CurrentControlSet\Enum\PCI\VEN_%04X&DEV_%04X&SUBSYS_%08X&REV_%02X                         | WebServer.dll
+  SYSTEM\CurrentControlSet\Services\%s                                                             | ReportEnv.dll
+  SYSTEM\CurrentControlSet\Services\Tcpip\Parameters                                               | ReportEnv.dll
+
+  ⭐ 其中 `SYSTEM\CurrentControlSet\Enum\PCI\VEN_%04X&DEV_%04X&SUBSYS_%08X&REV_%02X`
+     是一条【硬件枚举格式串】：按 PCI 厂商/设备/子系统 ID 拼查询路径，
+     即具备采集本机硬件标识的能力。这是一条比『API 计数』更硬的证据。
+

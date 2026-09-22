@@ -1,0 +1,68 @@
+=== AlibabaProtect 组件的版本元数据（脱敏摘录）===
+
+来源：对归档安装目录（3 个版本目录，各 75~76 个文件）逐一读取 PE 版本资源。
+说明：文件清单过长，此处保留【驱动类】与【元数据非空】的部分。
+
+==========================================================================================
+一、内核驱动：8 个变体（同一份产物为不同系统/位数各备一份）
+==========================================================================================
+  AliPaladin.sys                 1.19.4.1989    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladin_win10.sys           1.19.4.1989    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladin_win7.sys            1.19.4.1909    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladin_win7_last.sys       1.19.4.1989    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladin64_win10.sys         1.19.4.1989    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladin64_win7.sys          1.19.4.1909    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladin64_win7_last.sys     1.19.4.1989    AliBaba Group                      AliPaladin.dll       AliPaladin
+  AliPaladinEx64.sys             1.19.4.1989    AliBaba Group                      AliPaladin.dll       AliPaladin
+
+> 观察 1：CompanyName 写的是 `AliBaba Group`（注意大小写：B 大写），
+>         与主进程签名里的 `ALIBABA (CHINA) NETWORK TECHNOLOGY CO.,LTD.` 不同。
+> 观察 2：OriginalFilename 全部写的是 `AliPaladin.dll`，
+>         而它们实际以 `.sys` 形态加载 —— 与用户态同名 DLL 同源或同工程产出。
+> 观察 3：`AliPaladin_win7.sys` / `AliPaladin64_win7.sys` 版本号为 1.19.4.1909，
+>         其余为 1.19.4.1989。以版本号匹配时注意这个差异。
+
+==========================================================================================
+二、元数据非空的其余组件（自编译运行时 / 性能 SDK / 崩溃采集）
+==========================================================================================
+
+  arphadump.dll                  2.2.66         Alibaba Group                      arphadump.dll        arpha
+  arphadump.dll                  2.2.66         Alibaba Group                      arphadump.dll        arpha
+  arphadump.dll                  2.2.66         Alibaba Group                      arphadump.dll        arpha
+  dbghelp.dll                    6.12.0002.633 (debuggers(dbg).100201-1203) Microsoft Corporation              DBGHELP.DLL          Windows Image Helper
+  dbghelp.dll                    6.12.0002.633 (debuggers(dbg).100201-1203) Microsoft Corporation              DBGHELP.DLL          Windows Image Helper
+  dbghelp.dll                    6.12.0002.633 (debuggers(dbg).100201-1203) Microsoft Corporation              DBGHELP.DLL          Windows Image Helper
+  msvcp120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
+  msvcp120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
+  msvcp120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
+  msvcr120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
+  msvcr120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
+  msvcr120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
+  perfmonsdk.dll                 1.2.68         Alibaba Group                      perfmonsdk.dll       Perfmon
+  perfmonsdk.dll                 1.2.68         Alibaba Group                      perfmonsdk.dll       Perfmon
+  perfmonsdk.dll                 1.2.68         Alibaba Group                      perfmonsdk.dll       Perfmon
+  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
+  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
+  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
+  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
+  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
+  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
+
+> `msvcp120.dll` / `msvcr120.dll` 的版本串是 `built by: REL AliSec`，
+> 即由阿里安全团队自行编译，**不是 Microsoft 原版**。
+> `perfmonsdk.dll` 描述为 `Perfmon`、公司 `Alibaba Group`、版本 1.2.68。
+
+==========================================================================================
+三、第二个内核驱动（同包分发）：BluePerfmon4_*.sys
+==========================================================================================
+
+  BluePerfmon4_win7x64.sys       1.0.1.5 built by: WinDDK Windows (R) Win 7 DDK provider     BluePerfmon.sys      Blue Perfmon Driver
+  BluePerfmon4_win7x86.sys       1.0.1.5 built by: WinDDK Windows (R) Win 7 DDK provider     BluePerfmon.sys      Blue Perfmon Driver
+  BluePerfmon4_x64.sys           1.0.1.5        Windows (R) Win 7 DDK provider     BluePerfmon.sys      Blue Perfmon Driver
+  blueperfmon4_x64.sys           1.0.1.5        Windows (R) Win 7 DDK provider     BluePerfmon.sys      Blue Perfmon Driver
+  blueperfmon4_x86.sys           1.0.1.5        Windows (R) Win 7 DDK provider     BluePerfmon.sys      Blue Perfmon Driver
+  BluePerfmon4_x86.sys           1.0.1.5        Windows (R) Win 7 DDK provider     BluePerfmon.sys      Blue Perfmon Driver
+
+> ⚠️ 签名者字段是 `Windows (R) Win 7 DDK provider` —— 这是**旧 DDK 编译产物的
+>    占位字符串**，不代表来源是微软，只代表用旧 DDK 构建。
+

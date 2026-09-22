@@ -1,0 +1,84 @@
+=== 一次性探针实验：证明 IFEO 拦截机制真的生效 ===
+
+设计要点：用一次性映像名（IFEO_PROBE_TEST.exe）+ 无害可执行体（系统 hostname.exe），
+          先证明能跑、再加拦截证明跑不了、最后清理并核对既有配置未受影响。
+
+  === 探针实验：证明 IFEO 拦截机制真的生效（用一次性名字，零风险）===
+  
+  --- 1) 造一个可执行的探针（复制系统 hostname.exe）---
+    探针文件 = <工作目录>\tests\IFEO_PROBE_TEST.exe | 存在=True | 大小=40960
+  
+  --- 2) 拦截前先跑一次（应当成功执行）---
+    执行结果 = '<主机名>'  exit=0   → ✅ 可正常执行（符合预期）
+  
+  --- 3) 加 IFEO 拦截（Debugger → 不存在的路径）---
+    已写入:  | HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\IFEO_PROBE_TEST.exe |     Debugger    REG_SZ    C:\Windows\System32\BLOCKED-By-Admin-No-Exec.exe |
+  
+  --- 4) 拦截后再跑一次（应当失败）---
+    执行结果 = CreateProcess 失败: 由于出现以下错误，无法运行此命令: 系统找不到指定的文件。。
+    → 判定: ✅ 拦截生效（CreateProcess 被拒绝）
+  
+  --- 5) 清理探针（删 IFEO 键 + 删探针文件）---
+    IFEO 键已删 = True
+    探针文件已删 = True
+  
+  --- 6) 确认 4 个正式拦截仍在 ---
+    AlibabaProtect.exe        ✅ BLOCKED
+    AliProtectUpdate.exe      ✅ BLOCKED
+    AlibabaProtectCon.exe     ✅ BLOCKED
+    pc-sdk-setup.exe          ✅ BLOCKED
+    IFEO 子键总数 = 68  (应为 68)
+
+==========================================================================================
+实验证明了什么
+==========================================================================================
+  1) Debugger 指向不存在路径 ⇒ CreateProcess 直接失败
+     强度：直接证明（同一程序，加拦截前成功、加拦截后失败）
+  2) 拦截按映像名生效，与文件路径无关
+     强度：直接证明（探针位于临时目录，仍被拦）
+  3) 既有 4 条正式拦截未受影响
+     强度：直接验证（IFEO 子键计数前后一致 = 68）
+  4) 清理后可完全还原（键与探针文件均已删除）
+
+
+==========================================================================================
+附：用 scripts/ifeo_block.py --probe 复现同一实验
+==========================================================================================
+
+说明：下列输出来自交付脚本自带的探针命令（同一实验，可重复执行）。
+
+  ==============================================================================
+  一次性探针实验：验证 IFEO 拦截真的生效
+  ==============================================================================
+    设计：用一次性映像名 IFEO_PROBE_TEST.exe + 无害可执行体 hostname.exe
+          先证明能跑 → 再加拦截证明跑不了 → 最后清理
+  
+  --- 1) 造探针 ---
+    探针文件 = C:\Users\<用户>\AppData\Local\Temp\ifeo_probe_4e44in1n\IFEO_PROBE_TEST.exe   存在=True   大小=40960
+  
+  --- 2) 拦截前先跑一次（应当成功）---
+    输出='<主机名>'  exit=0
+    → ✅ 可正常执行（符合预期）
+  
+  --- 3) 加 IFEO 拦截（Debugger → 不存在的路径）---
+    已写入: HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\IFEO_PROBE_TEST.exe
+            Debugger = C:\Windows\System32\BLOCKED-By-Admin-No-Exec.exe
+  
+  --- 4) 拦截后再跑一次（应当失败）---
+    CreateProcess 失败: [WinError 2] 系统找不到指定的文件。
+    → ✅ 拦截生效（CreateProcess 被拒绝）
+  
+  --- 5) 清理探针 ---
+    IFEO 键已删 = True
+    探针文件已删 = True
+  
+  --- 6) 确认正式拦截未受影响 ---
+    AlibabaProtect.exe       ✅ BLOCKED
+    AliProtectUpdate.exe     ✅ BLOCKED
+    AlibabaProtectCon.exe    ✅ BLOCKED
+    pc-sdk-setup.exe         ✅ BLOCKED
+    已拦截 4 / 4
+  
+  结论: 拦截机制已验证有效（拦截前可运行 → 拦截后 CreateProcess 失败）
+  ==============================================================================
+

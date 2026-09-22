@@ -140,6 +140,21 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 
 ⇒ 这直接证明：**一次性清理不足以维持干净状态**，需要"防复发"措施（见 06）。
 
+### 半清理态实测：复活尝试被"文件缺失"阻断（第二台机器）
+
+一台**只删了文件、未做任何拦截**（无 IFEO）的机器，`AliUpdater` 每小时仍运行一次，但每次尝试都失败：
+
+| 观察 | 证据 |
+|---|---|
+| 更新器期望的版本目录不存在，每次在落地前失败 | `IntegrityCheck.ini` 明文错误 `[C:\Program Files (x86)\AlibabaProtect\1.0.70.988\] is not exist` |
+| 尝试痕迹与任务时刻三重吻合 | 任务运行时刻 = `Logs\` 新增 ERROR 日志时刻 = `IntegrityCheck.ini` 改写时刻 |
+| 尝试自清理（2026-03）持续至采集日（2026-09），**未停止、也未成功** | ERROR 日志按日计数；主程序 INFO 日志止于清理日，此后无成功运行记录 |
+
+两点启示（完整数据见 `evidence/partial-cleanup-state.txt`）：
+
+1. **"文件缺失"本身就是一道阻断** —— 复活路径 C 需要"安装器能落地"才成立；
+2. **"没装回来" ≠ "没有在试"** —— 半清理状态会长期持续产生低噪声尝试痕迹。这也是 05 节"试了但进不来"判定的**另一条独立证据路径**（不依赖 IFEO / Prefetch）。
+
 ---
 
 ## 5. 一条只能标为"疑似"的观察
@@ -162,6 +177,8 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 - 时间接近 ≠ 因果
 
 **正确表述**：`疑似相关，未证实；该驱动已被移除，此潜在因素随之消失。`
+
+> **对照样本**：另一台机器上，`AliPaladin` 服务键**悬挂**（`Start=Auto` 但驱动文件已删）产生的 `7000` **可以直接归因**（43 条，2026-05 起，见 `evidence/partial-cleanup-state.txt` 第三节）。同样的错误号，归因条件完全不同 —— 这正是上表逐条列出"不能归因理由"的意义。
 
 ---
 
@@ -211,6 +228,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 | 清理过程实录 | `evidence/cleanup-log.txt` |
 | 回调注册证据 | `evidence/driver-AliPaladin-functions.txt` |
 | 微过滤器的注册表侧证据 | `evidence/service-AliPaladin-minifilter.txt` |
+| 半清理态的持续复活尝试（第二台机器） | `evidence/partial-cleanup-state.txt` |
 
 ---
 

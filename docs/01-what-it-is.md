@@ -86,6 +86,8 @@ AliPaladin_win7_last.sys    AliPaladinEx64.sys        ← 本机实际加载的�
 
 > 版本号也不一致：`AliPaladin_win7.sys` 与 `AliPaladin64_win7.sys` 是 `1.19.4.1909`，其余为 `1.19.4.1989`。以版本号为线索做匹配时要注意这个差异。
 
+> **第二台机器印证（2026-09 实测，见 `evidence/partial-cleanup-state.txt`）**：另一台机器上 `AliPaladin` 服务键的 `ImagePath` 指向的是 **`AliPaladin64.sys`**（同样不是 `Ex64` 那个），其更新器期望的版本目录为 **`1.0.70.988`**（此前未见于版本谱系）。驱动变体与版本目录**因机器/版本而异**——清理与检测都应从服务注册项现取实际值，按固定文件名/版本号写死会漏。
+
 ---
 
 ## 4. 附：包里还有这些"能力组件"

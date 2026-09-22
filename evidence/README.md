@@ -20,6 +20,7 @@
 | `process-sample.txt` | 进程采样：累计 CPU 时间、工作集、线程、句柄、父进程链、无 TCP 外连 | [03](../docs/03-resource-cost.md) |
 | `ifeo-probe-log.txt` | 一次性探针实验完整记录（拦截前成功 → 拦截后失败 → 清理 → 核对） | [05](../docs/05-execution-forensics.md) |
 | `cleanup-log.txt` | 清理过程原始输出（含 `1052` / `1062` 等预期错误码与"假错误"记录） | 04 |
+| `partial-cleanup-state.txt` | **第二台机器**：半清理态（文件已删、任务仍启用、无拦截）下每小时复活尝试持续失败的记录；`AliPaladin64.sys` 变体、版本 `1.0.70.988`、可归因的 `7000` 对照样本 | [01](../docs/01-what-it-is.md)、[04](../docs/04-why-hard-to-remove.md) |
 
 ---
 

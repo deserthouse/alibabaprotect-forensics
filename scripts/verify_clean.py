@@ -88,25 +88,32 @@ class PROCESSENTRY32W(ctypes.Structure):
 
 # ----------------------------------------------------------------------- 检测原语
 
-def run_text(args, timeout=40):
+def run_text(args, timeout=40, with_rc=False):
     p = subprocess.run(args, capture_output=True, timeout=timeout)
     raw = p.stdout or b""
     for enc in ("utf-8", "gbk", "mbcs", "latin-1"):
         try:
-            return raw.decode(enc)
+            text = raw.decode(enc)
+            break
         except (UnicodeDecodeError, LookupError):
             continue
-    return raw.decode("utf-8", "replace")
+    else:
+        text = raw.decode("utf-8", "replace")
+    if with_rc:
+        return text, p.returncode
+    return text
 
 
 def service_query(name):
     """返回 (exists: bool, raw_text)"""
     try:
-        text = run_text(["sc.exe", "query", name], timeout=15)
+        text, rc = run_text(["sc.exe", "query", name], timeout=15, with_rc=True)
     except Exception as e:                                     # noqa: BLE001
         return None, "查询异常: %s" % e
-    # 1060 = ERROR_SERVICE_DOES_NOT_EXIST
-    if "1060" in text:
+    # sc.exe 失败时以 Win32 错误码作为退出码。
+    # 1060 = ERROR_SERVICE_DOES_NOT_EXIST（服务从未注册/已注销）
+    # 2   = ERROR_FILE_NOT_FOUND（注册表键已删、SCM 数据库未刷新的过渡态）
+    if rc in (1060, 2):
         return False, text
     return True, text
 
@@ -179,7 +186,7 @@ def main():
             results.append((True, "服务 %s 不存在" % name, False, text))
         elif exists:
             results.append((True, "服务 %s 不存在" % name, False,
-                            "仍然存在（sc query 未返回 1060）"))
+                            "仍然存在（sc query 退出码非 1060/2）"))
         else:
             results.append((True, "服务 %s 不存在" % name, True, "已确认：1060 服务未安装"))
 

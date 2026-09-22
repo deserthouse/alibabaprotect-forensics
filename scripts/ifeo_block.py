@@ -40,6 +40,11 @@ import subprocess
 import sys
 import tempfile
 
+# 中文控制台默认 GBK，输出 ⚠️ 等 emoji 会 UnicodeEncodeError（实际发生在 --apply 成功后的提示行）
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(errors="replace")
+    sys.stderr.reconfigure(errors="replace")
+
 IFEO_ROOT = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options"
 TARGETS = ["AlibabaProtect.exe", "AliProtectUpdate.exe",
            "AlibabaProtectCon.exe", "pc-sdk-setup.exe"]

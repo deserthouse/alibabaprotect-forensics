@@ -14,7 +14,9 @@ verify_clean.py —— 清理【后】的核验清单（只读）
     python verify_clean.py
 
 退出码
-    0 = 全部通过        1 = 有未通过项
+    0 = 判定项（第 1~5 项）全部通过 —— 清理完成
+    1 = 判定项有未通过 —— 清理未完成
+    （补充项/信息项未通过不影响退出码，仅在输出中提示）
 
 说明
     · 第 1~5 项为"清理完成"的判定项。
@@ -255,11 +257,11 @@ def main():
             print("        · %s —— %s" % (label, detail))
         print("      请对照卸载指南的『备选路径』（两阶段：先禁用 + 重启，再删除）。")
     print("")
-    print("退出码: %d   （0 = 全部通过；1 = 存在未通过项，可用于脚本判断）"
-          % (1 if failed else 0))
+    print("退出码: %d   （0 = 判定项全部通过；1 = 判定项有未通过 = 清理未完成。"
+          "补充项未通过不影响退出码）" % (1 if core_failed else 0))
     print("=" * 78)
 
-    return 1 if failed else 0
+    return 1 if core_failed else 0
 
 
 if __name__ == "__main__":

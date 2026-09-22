@@ -16,7 +16,7 @@ ifeo_block.py —— 阻止指定映像名启动（映像执行选项 / IFEO）�
 
 行为约束
     · 只写 Image File Execution Options 下的注册表键，不触碰任何程序文件。
-    · 建立前会先备份原有条目，还原时只删自己建立的项。
+    · 建立前会先备份原有键的全部值，还原时完整写回；桩路径意外存在时拒绝执行。
     · 不修改服务、不禁用计划任务（那些见卸载指南）。
 
 用法（需要管理员权限）
@@ -105,6 +105,52 @@ def is_our_stub(value):
     return bool(value) and value.strip().lower() == STUB.lower()
 
 
+def check_stub_absent():
+    """拦截机制的前提：桩路径必须不存在。若存在，'拦截'会退化成'重定向执行该文件'。"""
+    if os.path.exists(STUB):
+        print("✗ 桩路径 %s 竟然存在 —— 此时 Debugger 将重定向到该文件执行，而非拦截。" % STUB)
+        print("  请先确认该文件来历并删除它，再重试。")
+        return False
+    return True
+
+
+def read_key_values(name):
+    """读取键下全部值（IFEO 键为扁平结构，无子键），供还原时完整写回。
+
+    REG_BINARY 值以 "__b64__" 前缀 + base64 存入备份（JSON 不支持 bytes）。"""
+    import base64
+    import winreg
+    out = None
+    try:
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path(name)) as k:
+            out = {}
+            i = 0
+            while True:
+                try:
+                    vname, vdata, vtype = winreg.EnumValue(k, i)
+                    if isinstance(vdata, bytes):
+                        vdata = "__b64__" + base64.b64encode(vdata).decode("ascii")
+                    out[vname] = [vdata, vtype]
+                    i += 1
+                except OSError:
+                    break
+    except OSError:
+        pass
+    return out
+
+
+def write_key_values(name, values):
+    """把备份的键值完整写回（重建键）。"""
+    import base64
+    import winreg
+    with winreg.CreateKeyEx(winreg.HKEY_LOCAL_MACHINE, key_path(name), 0,
+                            winreg.KEY_SET_VALUE) as k:
+        for vname, (vdata, vtype) in values.items():
+            if isinstance(vdata, str) and vdata.startswith("__b64__"):
+                vdata = base64.b64decode(vdata[len("__b64__"):])
+            winreg.SetValueEx(k, vname, 0, vtype, vdata)
+
+
 # --------------------------------------------------------------------------- 备份
 
 def backup_path():
@@ -172,11 +218,14 @@ def cmd_apply(force=False):
     print("=" * 78)
     print("  桩路径: %s  （存在? %s —— 应为 False）" % (STUB, os.path.exists(STUB)))
     print("")
+    if not check_stub_absent():
+        return 1
     before = {}
     changed, skipped, failed = [], [], []
     for name in TARGETS:
         cur = get_debugger(name)
-        before[name] = {"existed": key_exists(name), "debugger": cur}
+        before[name] = {"existed": key_exists(name), "debugger": cur,
+                        "values": read_key_values(name)}
         if cur is not None and not is_our_stub(cur) and not force:
             skipped.append((name, cur))
             print("  [跳过] %-24s 已存在其它 Debugger: %s（用 --force 覆盖）" % (name, cur))
@@ -239,10 +288,17 @@ def cmd_remove(assume_yes=False):
             print("  [保留] %-24s Debugger 非本工具桩，未改动" % name)
             continue
         orig = bak.get(name) or {}
-        if orig.get("existed") and orig.get("debugger"):
+        if orig.get("existed") and orig.get("values") is not None:
+            write_key_values(name, orig["values"])
+            restored.append(name)
+            print("  [恢复] %-24s 原键值已完整写回（%d 个值）"
+                  % (name, len(orig["values"])))
+        elif orig.get("existed") and orig.get("debugger"):
+            # 旧版备份只有 debugger 字段（无全值快照），尽力恢复已知值
             set_debugger(name, orig["debugger"])
             restored.append(name)
-            print("  [恢复] %-24s Debugger → %s" % (name, orig["debugger"]))
+            print("  [恢复] %-24s Debugger → %s（旧版备份，仅恢复 Debugger 值）"
+                  % (name, orig["debugger"]))
         else:
             delete_key(name)
             removed.append(name)
@@ -268,6 +324,8 @@ def cmd_probe():
     print("  设计：用一次性映像名 %s + 无害可执行体 hostname.exe" % probe_name)
     print("        先证明能跑 → 再加拦截证明跑不了 → 最后清理")
     print("")
+    if not check_stub_absent():
+        return 1
 
     if not os.path.isfile(hostname):
         print("✗ 找不到 %s，无法进行实验" % hostname)

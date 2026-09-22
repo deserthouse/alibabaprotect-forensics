@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
-**Component identity, behavioral evidence, resource cost, removal-resistance mechanisms, and cleanup verification for `AlibabaProtect` (display name `Alibaba PC Safe Service`) on Windows.**
+**`AlibabaProtect` (display name `Alibaba PC Safe Service`) installs alongside Alibaba-family clients and runs as a resident `LocalSystem` service, measured at a sustained ~20% of one core; its companion driver was recorded installed 24 times in 70 days, and manual removal must follow a specific order or it gets rolled back. This repo documents the full forensics and verification.**
 
 ---
 
@@ -15,6 +15,17 @@
 **`AlibabaProtect` (display name `Alibaba PC Safe Service`, a background component installed alongside Alibaba-family clients) runs as an auto-start `LocalSystem` service and consumed a sustained ~20% of one core in measurement.**
 
 This repo answers **what it is, on what evidence, and whether it is gone**; the hands-on steps live in the companion repo [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide) — it answers **how to remove it**.
+
+---
+
+## Contents
+
+- [What this is](#what-this-is)
+- [Findings at a glance](#findings-at-a-glance)
+- [Docs](#docs)
+- [Scripts](#scripts)
+- [Evidence and statement discipline](#evidence--statement-discipline)
+- [Disclaimer](#disclaimer)
 
 ---
 
@@ -35,7 +46,7 @@ This repo answers **what it is, on what evidence, and whether it is gone**; the 
 
 ---
 
-## Contents
+## Docs
 
 | Doc | What's in it |
 |---|---|

@@ -1,6 +1,6 @@
 # AlibabaProtect 取证
 
-**Windows 上 `AlibabaProtect`（显示名 `Alibaba PC Safe Service`）的组件身份、行为证据、资源开销、难卸载机制与清理验证**
+**`AlibabaProtect`（显示名 `Alibaba PC Safe Service`）随阿里系客户端安装、以 `LocalSystem` 服务常驻运行，实测消耗约 20% 单核 CPU；配套驱动 70 天内被记录安装 24 次，手动清理需按特定顺序才能不被回滚。本仓库记录完整取证与验证。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
@@ -15,6 +15,17 @@
 **`AlibabaProtect`（显示名 `Alibaba PC Safe Service`，随阿里系客户端安装的后台组件）以 `LocalSystem` 服务开机自启、常驻运行，实测持续消耗约 20% 单核 CPU。**
 
 本仓库回答**它是什么、凭什么这么判断、是否已删干净**；配套的操作步骤在另一个仓库 [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)——它回答**怎么删**。
+
+---
+
+## 目录
+
+- [这个仓库是什么](#这个仓库是什么)
+- [实测结论摘要](#实测结论摘要)
+- [文档](#文档)
+- [脚本](#脚本)
+- [证据与表述原则](#证据与表述原则)
+- [免责声明](#免责声明)
 
 ---
 
@@ -35,7 +46,7 @@
 
 ---
 
-## 目录
+## 文档
 
 | 文档 | 内容 |
 |---|---|

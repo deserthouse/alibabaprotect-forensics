@@ -12,7 +12,7 @@
 
 ## What this is
 
-**`AlibabaProtect` (display name `Alibaba PC Safe Service`, the resident component shipped by Alibaba-family clients) keeps running in the background after those clients are uninstalled — measured at a sustained ~20% of one core.**
+**`AlibabaProtect` (display name `Alibaba PC Safe Service`, a background component installed alongside Alibaba-family clients) runs as an auto-start `LocalSystem` service and consumed a sustained ~20% of one core in measurement.**
 
 This repo answers **what it is, on what evidence, and whether it is gone**; the hands-on steps live in the companion repo [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide) — it answers **how to remove it**.
 

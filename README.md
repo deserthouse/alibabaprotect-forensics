@@ -14,7 +14,7 @@
 
 **`AlibabaProtect`（显示名 `Alibaba PC Safe Service`，随阿里系客户端安装的后台组件）以 `LocalSystem` 服务开机自启、常驻运行，实测持续消耗约 20% 单核 CPU。**
 
-本仓库回答**它是什么、凭什么这么判断、是否已删干净**；配套的操作步骤在另一个仓库 [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)——它回答**怎么删**。
+笔者考证**它是什么、凭什么这么判断、是否已删干净**；配套的操作步骤在另一个仓库 [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)——它回答**怎么删**。
 
 ---
 

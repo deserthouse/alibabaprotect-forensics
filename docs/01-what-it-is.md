@@ -16,7 +16,7 @@
 | `AliWangWang` / `淘宝桌面版` | 阿里系**客户端** | 二者之一会在启动/更新时**重新安装** `AlibabaProtect`（见 04） |
 | `AliProtectUpdate.exe` / `AlibabaProtectCon.exe` / `pc-sdk-setup.exe` | 更新器 / 检查器 / 安装包 | 防复发的拦截对象（见 06） |
 
-> **作者本人的误判记录**：排查中一度把 `aliedit` 的服务（`pcas`、`secbizsrv`）也算进"AlibabaProtect 没能删干净"的证据里。它们确实是阿里系组件，但**属于另一个产品**，两者的处置路径不同。
+> **笔者本人的误判记录**：排查中一度把 `aliedit` 的服务（`pcas`、`secbizsrv`）也算进"AlibabaProtect 没能删干净"的证据里。它们确实是阿里系组件，但**属于另一个产品**，两者的处置路径不同。
 
 ---
 

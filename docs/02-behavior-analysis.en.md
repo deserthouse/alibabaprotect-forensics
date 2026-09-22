@@ -187,7 +187,7 @@ This section must draw one line clearly, or the "capability list" gets read as a
 
 ---
 
-## 7. Limitations of static analysis (must read)
+## 7. Limitations of static analysis
 
 | Limitation | Consequence |
 |---|---|

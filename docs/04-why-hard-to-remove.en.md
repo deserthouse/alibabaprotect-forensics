@@ -187,7 +187,7 @@ The same error appeared once each on 09-05 and 09-14 as well — **5 in total**.
 
 ---
 
-## 6. The correct remediation order (why this sequence)
+## 6. The correct remediation order
 
 The three mechanisms dictate an **order that must not be shuffled**:
 

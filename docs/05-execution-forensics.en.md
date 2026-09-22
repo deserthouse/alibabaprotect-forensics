@@ -125,7 +125,7 @@ Raw record in `evidence/ifeo-probe-log.txt`.
 
 ---
 
-## 3. Limitations (must know)
+## 3. Limitations
 
 | Limitation | Notes |
 |---|---|

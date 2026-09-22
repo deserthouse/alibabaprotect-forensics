@@ -184,7 +184,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 
 ---
 
-## 6. 正确的处置顺序（为什么是这个次序）
+## 6. 正确的处置顺序
 
 三条机制决定了**操作顺序不能乱**：
 

@@ -51,7 +51,7 @@ Whole-machine share = 20.1% ÷ 16 ≈ 1.26%
 
 ---
 
-## 2. Limitations of this data (stated before any conclusions)
+## 2. Limitations of this data
 
 | Limitation | Impact |
 |---|---|

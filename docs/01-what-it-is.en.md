@@ -126,7 +126,7 @@ Three points worth noting:
 
 ---
 
-## 5. The attribution methods used in this doc (reusable)
+## 5. The attribution methods used in this doc
 
 | Means | Command | What it reveals |
 |---|---|---|

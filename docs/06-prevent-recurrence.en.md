@@ -132,7 +132,7 @@ sc.exe delete AliPaladin
 
 > ⚠️ **Recommendation: do not use the "placeholder service" option.** IFEO is measured-effective without these side effects; there is no reason to take on this risk. If you must try, **back up the registry first and run the verification above immediately after every experiment**.
 
-### 4.4 ⚠️ Common failure: the write is intercepted by security software (measured pitfall)
+### 4.4 ⚠️ Common failure: the write is intercepted by security software (measured)
 
 **Symptom**: `--apply` or manual registry writes report:
 

@@ -187,7 +187,7 @@ https://reverseengineering.stackexchange.com/questions/14171/thread-local-storag
 
 ---
 
-## 7. 静态分析的局限（必读）
+## 7. 静态分析的局限
 
 | 局限 | 后果 |
 |---|---|

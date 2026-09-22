@@ -125,7 +125,7 @@ Get-ChildItem C:\Windows\Prefetch -Filter "*.pf" |
 
 ---
 
-## 3. 局限（必须知道）
+## 3. 局限
 
 | 局限 | 说明 |
 |---|---|

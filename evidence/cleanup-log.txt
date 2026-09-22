@@ -8,11 +8,7 @@
 ---------- 一、主流程（备份 → 删服务 → 删驱动 → 删目录 → 核验）----------
 ############ 阶段0 备份 ############
   已备份 C:\Program Files (x86)\AlibabaProtect -> <工作目录>\archive\2026-09-22-alibaba-components\AlibabaProtect  (599 项)
-  已备份 C:\Program Files (x86)\alipay -> <工作目录>\archive\2026-09-22-alibaba-components\alipay  (38 项)
-  已导出注册表 HKLM\SOFTWARE\WOW6432Node\Alipay -> HKLM_SOFTWARE_WOW6432Node_Alipay.reg
   已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect -> HKLM_SYSTEM_CurrentControlSet_Services_AlibabaProtect.reg
-  已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\pcas -> HKLM_SYSTEM_CurrentControlSet_Services_pcas.reg
-  已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\secbizsrv -> HKLM_SYSTEM_CurrentControlSet_Services_secbizsrv.reg
   已导出注册表 HKLM\SYSTEM\CurrentControlSet\Services\AliPaladin -> HKLM_SYSTEM_CurrentControlSet_Services_AliPaladin.reg
 
 ############ 阶段1 nuke AlibabaProtect ############
@@ -31,29 +27,10 @@
 --- 1e 删除目录 ---
   仍存在 = False
 
-############ 阶段2 nuke 支付宝安全控件 ############
---- 2a 停止并删除两个服务 ---
-  pcas stop  :  / SERVICE_NAME: pcas  /         TYPE               : 10  WIN32_OWN_PROCESS   /         STATE              : 3  STOP_PENDING  /                                 (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN) /         WIN32_EXIT_CODE    : 0  (0x0) /         SERVICE_EXIT_CODE  : 0  (0x0) /         CHECKPOINT         : 0x0 /         WAIT_HINT          : 0x0
-  pcas delete: [SC] DeleteService 成功
-  secbizsrv stop  :  / SERVICE_NAME: secbizsrv  /         TYPE               : 10  WIN32_OWN_PROCESS   /         STATE              : 3  STOP_PENDING  /                                 (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN) /         WIN32_EXIT_CODE    : 0  (0x0) /         SERVICE_EXIT_CODE  : 0  (0x0) /         CHECKPOINT         : 0x0 /         WAIT_HINT          : 0x0
-  secbizsrv delete: [SC] DeleteService 成功
---- 2b 结束进程 ---
-  ✅ 已结束 secbizsrv PID=6408
---- 2c 删除目录 ---
-  alipay 目录仍存在 = False
---- 2d 清理注册表残留 ---
-  HKLM\SOFTWARE\WOW6432Node\Alipay 仍存在 = False
-
-############ 阶段3 核验 ############
 --- 进程 ---
   AlibabaProtect    ✅ 未运行
-  pcas              ✅ 未运行
-  secbizsrv         ✅ 未运行
-  aliwssv           ✅ 未运行
 --- 服务 ---
   AlibabaProtect    ✅ 已移除
-  pcas              ✅ 已移除
-  secbizsrv         ✅ 已移除
   AliPaladin        ✅ 已移除
 --- 驱动 ---
   AliPaladinEx64.sys 仍存在 = False
@@ -62,51 +39,32 @@
   AliUpdater = Disabled
 --- 目录 ---
   C:\Program Files (x86)\AlibabaProtect 存在=False
-  C:\Program Files (x86)\alipay 存在=False
-  （本机保留未动的阿里系客户端：支付宝安全控件、阿里旺旺、淘宝桌面版 —— 版本信息略）
+  （本机保留未动的阿里系客户端 —— 名称与版本略；
+    它们是 AlibabaProtect 可能被重新安装的来源，详见 docs/04）
 
----------- 二、收尾与最终核验（残留数据目录 / 卸载注册项 / 残留扫描）----------
-=== 收尾1 备份并删除两个残留数据目录 ===
+---------- 二、收尾与最终核验（残留数据目录 / 残留扫描）----------
+=== 收尾1 备份并删除残留数据目录 ===
   已备份 C:\ProgramData\Alibaba\AlibabaProtectDT -> <工作目录>\archive\2026-09-22-alibaba-components\ProgramData_AlibabaProtectDT (22 项)
     删除后仍存在 = False
-  已备份 C:\ProgramData\alipay -> <工作目录>\archive\2026-09-22-alibaba-components\ProgramData_alipay (7 项)
-    删除后仍存在 = False
 
-=== 收尾2 删除残留卸载注册项 ===
-  reg export 备份: 操作成功完成。 /
-  reg delete    : 操作成功完成。 /
-  删除后仍存在  = False
-
-=== 最终核验：残留扫描 ===
   AlibabaProtect*    -> C:\Program Files (x86)\AliWangWang\10.03.39C\SafeGuard\AlibabaProtectCon.cfg ; C:\Program Files (x86)\AliWangWang\10.03.39C\SafeGuard\AlibabaProtectCon.exe ; C:\Users\<用户>\AppData\Local\Programs\taobao\resources\nsis\safe\AlibabaProtectCon.cfg ; C:\Users\<用户>\AppData\Local\Programs\taobao\resources\nsis\safe\AlibabaProtectCon.exe ; C:\Users\<用户>\AppData\Roaming\taobao\Plugins\WangWang\10.4.5\SafeGuard\AlibabaProtectCon.cfg ; C:\Users\<用户>\AppData\Roaming\taobao\Plugins\WangWang\10.4.5\SafeGuard\AlibabaProtectCon.exe
-  aliedit*           -> 无残留
   AliPaladin*        -> 无残留
 
 === 最终核验：进程 / 服务 / 任务 ===
   进程 AlibabaProtect    ✅ 无
-  进程 pcas              ✅ 无
-  进程 secbizsrv         ✅ 无
-  进程 aliwssv           ✅ 无
   服务 AlibabaProtect    ✅ 已移除
-  服务 pcas              ✅ 已移除
-  服务 secbizsrv         ✅ 已移除
   服务 AliPaladin        ✅ 已移除
   任务 AliProctectUpdate Disabled
   任务 AliUpdater        Disabled
 
-  （本机保留未动的阿里系客户端：支付宝安全控件、阿里旺旺、淘宝桌面版 —— 版本信息略）
+  （本机保留未动的阿里系客户端 —— 名称与版本略；
+    它们是 AlibabaProtect 可能被重新安装的来源，详见 docs/04）
 === 备份位置与内容 ===
   <工作目录>\archive\2026-09-22-alibaba-components
     AlibabaProtect
-    alipay
     ProgramData_AlibabaProtectDT
-    ProgramData_alipay
-    HKLM_SOFTWARE_WOW6432Node_Alipay.reg
     HKLM_SYSTEM_CurrentControlSet_Services_AlibabaProtect.reg
     HKLM_SYSTEM_CurrentControlSet_Services_AliPaladin.reg
-    HKLM_SYSTEM_CurrentControlSet_Services_pcas.reg
-    HKLM_SYSTEM_CurrentControlSet_Services_secbizsrv.reg
-    uninstall_alieditplus.reg
 
 ---------- 三、负面结果实验：服务注册表键加 Deny ACE（实测失败）----------
 

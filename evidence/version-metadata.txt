@@ -26,12 +26,12 @@
 二、元数据非空的其余组件（自编译运行时 / 性能 SDK / 崩溃采集）
 ==========================================================================================
 
+  说明：只列【元数据能说明来路】的组件；包内随附的微软原版通用运行时
+        （vcruntime140.dll / dbghelp.dll 等）与本组件无关联，不收录。
+
   arphadump.dll                  2.2.66         Alibaba Group                      arphadump.dll        arpha
   arphadump.dll                  2.2.66         Alibaba Group                      arphadump.dll        arpha
   arphadump.dll                  2.2.66         Alibaba Group                      arphadump.dll        arpha
-  dbghelp.dll                    6.12.0002.633 (debuggers(dbg).100201-1203) Microsoft Corporation              DBGHELP.DLL          Windows Image Helper
-  dbghelp.dll                    6.12.0002.633 (debuggers(dbg).100201-1203) Microsoft Corporation              DBGHELP.DLL          Windows Image Helper
-  dbghelp.dll                    6.12.0002.633 (debuggers(dbg).100201-1203) Microsoft Corporation              DBGHELP.DLL          Windows Image Helper
   msvcp120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
   msvcp120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
   msvcp120.dll                   12.00.21005.1 built by: REL AliSec                             AliSec               AliSec
@@ -41,12 +41,6 @@
   perfmonsdk.dll                 1.2.68         Alibaba Group                      perfmonsdk.dll       Perfmon
   perfmonsdk.dll                 1.2.68         Alibaba Group                      perfmonsdk.dll       Perfmon
   perfmonsdk.dll                 1.2.68         Alibaba Group                      perfmonsdk.dll       Perfmon
-  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
-  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
-  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
-  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
-  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
-  vcruntime140.dll               14.42.34438.0  Microsoft Corporation              vcruntime140.dll     Microsoft® C Runtime Library
 
 > `msvcp120.dll` / `msvcr120.dll` 的版本串是 `built by: REL AliSec`，
 > 即由阿里安全团队自行编译，**不是 Microsoft 原版**。

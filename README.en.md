@@ -101,7 +101,7 @@ The writing of this repo follows four constraints, so readers can judge each con
 
 See [DISCLAIMER.md](DISCLAIMER.md). In short:
 
-- This documentation and the scripts are for **diagnosis and technical research on devices you own and administer** only.
+- This documentation and the tools it mentions are for **diagnosis and technical research on devices you own and administer** only.
 - The author is **not affiliated** with any vendor mentioned, nor authorized or sponsored by them.
 - Everything is based on **specific machines and versions**; other versions may differ in paths, versions, and behavior.
 - The operations described may modify system services, drivers, and the registry — **assess and create a restore point first**.

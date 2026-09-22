@@ -22,13 +22,13 @@ This repo answers **what it is, on what evidence, and whether it is gone**; the 
 
 | # | Finding | Evidence | Strength |
 |:---:|---|---|:---:|
-| 1 | It is a resident service `AlibabaProtect` (display name `Alibaba PC Safe Service`) running as **`LocalSystem`, `Start=2` (auto)** | Service registry export: `ImagePath` / `DisplayName` / `ObjectName` | ✅ certain |
-| 2 | It ships a kernel driver `AliPaladinEx64.sys` (service `AliPaladin`) | Service registry export, driver PE metadata | ✅ certain |
-| 3 | The driver registers **a file-system minifilter + a registry callback + a process-creation callback** | Embedded import/function names in the driver binary | ✅ certain (static capability) |
-| 4 | It **repeatedly installs its own driver service** (multiple `7045` events for the same driver service) | System log, Service Control Manager | ✅ certain |
-| 5 | After a crash, **SCM's recovery policy restarts it after 60 seconds** | System log `7031` verbatim | ✅ certain |
-| 6 | In one measured session it consumed **≈20% of one core cumulative** (≈1.26% whole-machine / 16 logical processors) | Process sampling: cumulative CPU time ÷ uptime | ✅ measured (single machine) |
-| 7 | Its install directory contains **encrypted configuration files** and executables whose **Chinese strings are byte-transformed** | Binary static analysis | ✅ certain |
+| 1 | It is a resident service `AlibabaProtect` (display name `Alibaba PC Safe Service`) running as **`LocalSystem`, `Start=2` (auto)** | Service registry export: `ImagePath` / `DisplayName` / `ObjectName` | ✅ measured |
+| 2 | It ships a kernel driver `AliPaladinEx64.sys` (service `AliPaladin`) | Service registry export, driver PE metadata | ✅ measured |
+| 3 | The driver registers **a file-system minifilter + a registry callback + a process-creation callback** | Embedded import/function names in the driver binary | ✅ measured (static capability ≠ actual interception) |
+| 4 | It **repeatedly installs its own driver service** (multiple `7045` events for the same driver service) | System log, Service Control Manager | ✅ measured |
+| 5 | After a crash, **SCM's recovery policy restarts it after 60 seconds** | System log `7031` verbatim | ✅ measured |
+| 6 | In one measured session its **average CPU usage was ≈20% of one core** (÷16 logical processors ≈ 1.26% whole-machine) | Process sampling: cumulative CPU time ÷ uptime | ✅ measured (single machine, two sample points) |
+| 7 | Its install directory contains **encrypted configuration files** and executables whose **Chinese strings are byte-transformed** | Binary static analysis | ✅ measured |
 | 8 | What it actually does at runtime **cannot be asserted from static evidence** | Strings and config encrypted; no outbound connections measured | ⚠️ unproven (see 03) |
 
 > Finding 8 is a deliberately kept blank. **"What it can do" and "what it is doing right now" are two different things**; this repo never writes the former as the latter.

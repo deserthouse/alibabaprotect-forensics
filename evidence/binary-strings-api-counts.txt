@@ -1,6 +1,7 @@
-=== 对安装目录内 27 个主要模块的字符串扫描（已剔除证书链噪声）===
+=== 对安装目录内主要模块的字符串扫描（已剔除证书链噪声）===
 
-目标模块（部分）：AlibabaProtect.exe / FileScanner.dll / FileWatch.dll /
+目标模块共 27 个（其中 1 个因文件名与清单不符未命中，实际扫描 26 个）：
+  AlibabaProtect.exe / FileScanner.dll / FileWatch.dll /
   FileMonitor.dll / PathMon.dll / ProcessScanner.dll / perfmonsdk.dll /
   WebServer.dll / WebGate.dll / WebUnion.dll / Report.dll / ServiceReport.dll /
   Scheduler.dll / HealthCheck.dll / Update.dll / NetCore.dll / DBEngine.dll /
@@ -67,4 +68,32 @@
   ⭐ 其中 `SYSTEM\CurrentControlSet\Enum\PCI\VEN_%04X&DEV_%04X&SUBSYS_%08X&REV_%02X`
      是一条【硬件枚举格式串】：按 PCI 厂商/设备/子系统 ID 拼查询路径，
      即具备采集本机硬件标识的能力。这是一条比『API 计数』更硬的证据。
+
+==========================================================================================
+六、DBEngine.dll 内嵌 SQLite 的核验（独立复查）
+==========================================================================================
+
+  === DBEngine.dll 内嵌 SQLite 的核验 ===
+  
+  文件: AlibabaProtect 1.0.70.3194 / DBEngine.dll (3,219,504 字节)
+  
+  -- 'SQLite format 3' 数据库头格式串:
+  1
+  
+  -- SQLite 内部符号（前 12 个，按出现次数）:
+        9 sqlite_master
+        7 sqlite_sequence
+        2 sqlite_temp_master
+        2 sqlite_rename_trigger
+        2 sqlite_autoindex_
+        1 sqlite_versionsqlite_source_idsqlite_logsqlite_compileoption_usedsqlite_compileoption_getquotelast_insert_rowidchangestotal_changesreplacezeroblobload_extensionsumtotalavgcountgroup_concatforeign
+        1 sqlite_temp_mastersqlite_masterSELECT
+        1 sqlite_table
+        1 sqlite_stattable
+        1 sqlite_stat3sqlite_stat4CREATE
+        1 sqlite_stat1too
+        1 sqlite_stat1tbl
+
+  ⇒ 含 SQLite 数据库头格式串 `SQLite format 3` 与大量 sqlite_* 内部符号，
+    证实 DBEngine.dll 内嵌了 SQLite（用于本地数据存储）。
 

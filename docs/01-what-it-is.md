@@ -102,7 +102,7 @@ AliPaladin_win7_last.sys    AliPaladinEx64.sys        ← 本机实际加载的�
 | `Scheduler.dll` | — | 任务调度 |
 | `Report.dll` / `ServiceReport.dll` / `ReportEnv.dll` / `EventTrack.dll` | — | 上报与埋点 |
 | `WebServer.dll` / `WebGate.dll` / `WebUnion.dll` / `NetCore.dll` | — | 本地服务 / 网络 |
-| `DBEngine.dll` | — | 本地数据（配合内嵌 SQLite 线索） |
+| `DBEngine.dll` | — | 本地数据（**已核验内嵌 SQLite**：二进制含 `SQLite format 3` 头与 `sqlite_master` 等内部符号，见 `evidence/binary-strings-api-counts.txt` 第六节） |
 | `SignVerify.dll` / `StrongBox.dll` / `DataEnc.dll` | — | 签名校验 / 加密 |
 | `SecurityGuardSDK(64).dll` / `ThreatSieveSDK(64).dll` | — | 安全 SDK |
 | `AbstractM.dll` | — | 版本抽象层 |

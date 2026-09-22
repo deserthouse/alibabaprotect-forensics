@@ -12,9 +12,9 @@
 
 > **非专业读者提示**：本仓库是取证记录，不需要通读。如果你只是发现电脑里有个叫 `AlibabaProtect.exe` 的进程占用很高、想删掉它，直接看配套的操作指南 **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** —— 从只读检查到清理验证，每一步都带预期输出。如果不熟悉命令行，也可以把该指南的链接交给你的 AI 助手，让它按文档逐步讲解或代为执行；每一步都有预期输出可供核对。
 
-一台 Windows 机器上出现了**卸载了阿里系客户端之后仍然常驻、且消耗可观 CPU 的 `AlibabaProtect.exe`**。本仓库把这台机器上采集到的证据、可复现的判定方法和每一步的验证结果整理成文档。
+**`AlibabaProtect`（显示名 `Alibaba PC Safe Service`，阿里系客户端附带的常驻组件）在客户端卸载后仍留在后台运行，实测持续消耗约 20% 单核 CPU。** 本仓库记录完整取证：它是什么、凭什么这么判断、以及如何验证已删干净。
 
-**只讲 `AlibabaProtect` 这一个组件。** 不含通用内存分析、不含其他厂商组件、不含与本组件无关的系统调优内容。
+只讲这一个组件，不含通用内存分析或其他厂商内容。
 
 配套的操作步骤在另一个仓库：[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)。本仓库回答**它是什么、凭什么这么判断、是否已清理干净**；指南仓库回答**怎么删**。
 

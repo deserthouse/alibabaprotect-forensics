@@ -12,9 +12,9 @@
 
 ## What this is
 
-A Windows machine showed an **`AlibabaProtect.exe` that stayed resident and consumed measurable CPU even after the Alibaba-family clients that shipped it were uninstalled**. This repo organizes the evidence collected on that machine, the reproducible determination methods, and the verification results of each step into documents.
+**`AlibabaProtect` (display name `Alibaba PC Safe Service`, the resident component shipped by Alibaba-family clients) keeps running in the background after those clients are uninstalled — measured at a sustained ~20% of one core.** This repo documents the full forensics: what it is, on what evidence, and how a clean removal is verified.
 
-**Strictly about the `AlibabaProtect` component.** No general memory analysis, no other vendors' components, no unrelated system tuning.
+Strictly this one component — no general memory analysis, no other vendors' content.
 
 The hands-on steps live in a companion repo: [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide). This repo answers **what it is, on what evidence, and whether it is gone**; the guide answers **how to remove it**.
 

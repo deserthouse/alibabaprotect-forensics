@@ -129,6 +129,7 @@ Get-ChildItem C:\Windows\Prefetch -Filter "*.pf" |
 |---|---|
 | Prefetch 可能被禁用 | SSD 上系统默认可能关闭预读。**先确认 `C:\Windows\Prefetch` 有内容**，否则整套方法失效 |
 | Prefetch 可能被清理 | 清理软件会删 `.pf` 文件 |
+| **`LastAccessTime` 更新可能默认关闭** | Windows 10 1803+ 上 NTFS 的最后访问时间更新默认为 "System Managed"：**系统盘 > 128 GB 时默认关闭**（`fsutil behavior query disablelastaccess` 可查）。此时"访问时间落在触发时刻"这枚指纹**不会出现**，只剩 Prefetch 缺失一条腿（只能证明"没成功跑过"，无法区分"没试"与"被拦"）。本机实测时该指纹生效，说明本机该功能处于开启状态 |
 | 只对"有预读价值"的程序生成 | 短命/极小的程序可能不生成记录 |
 | 不含命令行参数 | 无法知道"是怎么被启动的" |
 | 可被伪造/清除 | 对抗场景下不可依赖 |

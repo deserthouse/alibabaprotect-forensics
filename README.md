@@ -45,7 +45,7 @@
 | [docs/06-prevent-recurrence.md](docs/06-prevent-recurrence.md) | **防复发**：IFEO 原理、方案对比、实测负面结果与局限 |
 | [evidence/](evidence/) | **脱敏后的原始证据摘录**（注册表导出、事件日志、二进制分析输出） |
 | [scripts/](scripts/) | 只读诊断脚本 |
-| [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |
+| [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明与 **AI 使用声明**（中英双语） |
 
 ---
 

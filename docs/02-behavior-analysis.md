@@ -12,7 +12,7 @@
 |---|---|---|
 | `FltRegisterFilter` | 注册**文件系统微过滤器（minifilter）** | 可以拦截/放行文件操作 → **保护自己的安装目录**，删除时报 `Access denied` |
 | `FltStartFiltering` | **启动**上述过滤器 | 与上一条构成完整的过滤器生命周期 |
-| `CmRegisterCallback` | 注册**注册表回调** | 可以拦截注册表写入 → **把服务 `Start` 值改回 `auto`**（"禁用后几秒自己变回来"的机制解释） |
+| `CmRegisterCallback` | 注册**注册表回调** | 可以拦截注册表写入 → 与实测观察到的 **"`Start` 改 disabled 后几秒自己变回 `auto`"** 相符（见 04 第 2 节；回滚执行者未被追踪，此为**机制推断**，也可能是用户态进程轮询回写） |
 | `PsSetCreateProcessNotifyRoutine` | 注册**进程创建回调** | 可以感知进程创建/退出 → **守护 `AlibabaProtect.exe` 本体** |
 | `KeStackAttachProcess` | **跨进程内存操作** | 可以读写其他进程的地址空间 |
 | `IoCreateDevice` | 创建设备对象 | 提供**用户态通信接口** |

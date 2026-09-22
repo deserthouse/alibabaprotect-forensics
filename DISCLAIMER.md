@@ -42,6 +42,14 @@
 **特别声明**：本项目**不主张**该组件存在恶意行为。文中列出的"能力清单"来自静态分析（字符串与 API 名），
 它证明的是**代码具备这些能力**，而不是"它正在做某事"。凡未获直接证据的部分，文中均标注为**未证实**。
 
+### AI 使用声明
+
+本项目的研究、取证与文档撰写**深度参与使用了 AI 工具**（代码辅助与文本整理），但：
+
+- 全部**研究目标、清理决策与最终验收由人类作者作出**；
+- 所有证据均采集自作者本人设备，采集命令与原始输出可在 `evidence/` 复核；
+- 文档结论由人类作者审订后发布，表述纪律（实测事实 / 能力推断 / 疑似关联）由人类作者把关。
+
 ### 免责
 
 本项目以 MIT 许可发布，**不提供任何明示或暗示的担保**。因使用本文档或脚本而产生的任何后果，由使用者自行承担。
@@ -91,6 +99,17 @@ registry backup first.
 **Explicit statement**: this project does **not** allege malicious behavior.
 The "capability" lists come from static analysis (strings and API names); they show what the code *can* do,
 not what it is doing. Anything without direct evidence is marked **unconfirmed**.
+
+### AI Usage Statement
+
+AI tools were **substantially involved** in the research, forensic analysis, and drafting of this project
+(code assistance and text organization). However:
+
+- All **research goals, cleanup decisions, and final acceptance were made by the human author**;
+- All evidence was collected from the author's own machines; collection commands and raw output can be
+  re-checked in `evidence/`;
+- Conclusions were reviewed and finalized by the human author before publication, including the statement
+  discipline (measured fact / capability inference / suspected correlation).
 
 ### Disclaimer
 

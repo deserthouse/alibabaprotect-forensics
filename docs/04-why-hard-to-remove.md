@@ -18,10 +18,10 @@
 
 ## 2. 路径 A：回调自保护的表现
 
-| 现象 | 直接原因 |
+| 现象 | 机制解释（含置信度） |
 |---|---|
-| `sc config ... start= disabled` 后，几秒内 `Start` 变回 `2`（自动） | 注册表回调（`CmRegisterCallback`）拦截并回滚了这次写入 |
-| `Remove-Item` 安装目录报 `Access denied` | 文件系统微过滤器（`FltRegisterFilter`）拦截了删除操作 |
+| `sc config ... start= disabled` 后，几秒内 `Start` 变回 `2`（自动） | 实测观察到**回滚现象**；机制与驱动注册的注册表回调（`CmRegisterCallback`）能力**一致 —— 推断**。执行者未被逐一追踪（也可能是用户态进程轮询回写，如 `RestartService.exe`） |
+| `Remove-Item` 安装目录报 `Access denied` | 文件系统微过滤器（`FltRegisterFilter`，注册表侧有独立配置证据，见 02）拦截了删除操作 |
 | 结束进程后它自动回来 | 进程创建回调（`PsSetCreateProcessNotifyRoutine`）+ 路径 B |
 
 ### 实测到的具体失败与真相
@@ -29,7 +29,7 @@
 | 操作 | 返回 | 真相 |
 |---|---|---|
 | `sc stop AlibabaProtect` | **1052**（请求的控件对此服务无效） | **正常现象**：该服务未实现停止处理逻辑，不是权限问题 |
-| `sc delete AlibabaProtect` | 成功 | ✅ 删除服务会顺带终止其进程 |
+| `sc delete AlibabaProtect` | 成功 | ✅ 服务注册项被标记删除，SCM 不再拉起；**进程本体不会因此终止**（实测：delete 后进程仍在，随后被显式结束，见 `evidence/cleanup-log.txt` 阶段 1c） |
 | `sc stop AliPaladin` | 1062 / 1052 | **正常现象**：内核驱动在线不可停止 |
 | 删除 `AliPaladinEx64.sys` 文件 | 报"安全删除"错误 | ⚠️ **假错误** —— 复查确认文件**已实际删除** |
 
@@ -173,9 +173,9 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 ① 先禁用更新类计划任务
      └─ 防止清理过程中被"补装"
 
-② 再 sc delete 服务（服务 + 驱动服务）
+② 再 sc delete 服务（服务 + 驱动服务），随后显式结束进程
      └─ 断掉路径 B（SCM 自动恢复）
-     └─ 服务删除会顺带终止其进程，路径 A 的进程守护随之失效
+     └─ 注意：delete 只标记删除、不终止运行中的进程 —— 进程由 ③ 之前单独结束
 
 ③ 然后删文件与目录
      └─ 此时微过滤器已不再被加载，删除通常不再受阻

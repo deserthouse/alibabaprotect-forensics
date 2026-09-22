@@ -1,4 +1,4 @@
-# AlibabaProtect 取证
+# AlibabaProtect 小考
 
 **`AlibabaProtect`（显示名 `Alibaba PC Safe Service`）随阿里系客户端安装、以 `LocalSystem` 服务常驻运行，实测消耗约 20% 单核 CPU；配套驱动 70 天内被记录安装 24 次，手动清理需按特定顺序才能不被回滚。本仓库记录完整取证与验证。**
 

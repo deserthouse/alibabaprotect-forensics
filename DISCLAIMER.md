@@ -27,6 +27,8 @@
 - 文中出现的产品名、服务名、文件名**仅用于客观指称**（用于定位与描述所讨论的技术对象）。
 - 本文档**不提供**任何二进制、安装包或编译产物；**不提供 Release**。
 - 本文档的目标是**技术分析与排障方法**，不是提供规避安全软件的方案。
+- `evidence/` 中的内容均为作者本机采集的**客观事实记录**（服务配置、文件路径、符号名、日志摘录等），不含任何厂商代码、二进制或受版权保护的本体资源。
+- 本项目仅记录**终端用户对自有设备的管理权**的行使；不主张、也不协助对他人计算机系统或厂商线上服务的任何操作。
 - 文中的资源消耗数据为**单机实测**，不代表其他环境。
 
 ### 表述纪律
@@ -86,6 +88,8 @@ registry backup first.
 - Product, service, and file names appear **solely for nominative reference**, to identify the technical subject under discussion.
 - This project ships **no binaries, installers, or compiled artifacts**, and publishes **no releases**.
 - The intent is **analysis and troubleshooting methodology**, not circumventing security software.
+- Everything in `evidence/` is a **factual record collected from the author's own machines** (service configurations, file paths, symbol names, log excerpts); the project contains **no vendor code, binaries, or copyrighted original resources**.
+- This project documents only the exercise of an **end user's right to administer their own devices**; it does not claim, nor assist, any operation against other people's computer systems or the vendor's online services.
 - Resource-consumption figures are **single-machine measurements** and do not represent other environments.
 
 ### Statement discipline

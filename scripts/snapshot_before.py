@@ -43,7 +43,37 @@ INSTALL_DIRS = [
     r"C:\Program Files (x86)\AlibabaProtect",
     r"C:\ProgramData\Alibaba\AlibabaProtectDT",
 ]
-DRIVER_FILES = [r"C:\Windows\System32\drivers\AliPaladinEx64.sys"]
+DRIVER_FILES_KNOWN = [r"C:\Windows\System32\drivers\AliPaladinEx64.sys"]
+
+
+def driver_paths():
+    """应检查的驱动文件清单：以服务键 ImagePath 现取为准（不同机器/版本可能
+    指向 AliPaladin64.sys 等其它变体），另加 drivers 目录通配与已知默认路径兜底。"""
+    import glob
+    paths = []
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                            r"SYSTEM\CurrentControlSet\Services\AliPaladin") as k:
+            try:
+                ip = winreg.QueryValueEx(k, "ImagePath")[0]
+                ip = ip.strip()
+                if ip.startswith("\\??\\"):
+                    ip = ip[4:]
+                paths.append(ip)
+            except OSError:
+                pass
+    except OSError:
+        pass
+    paths.extend(glob.glob(r"C:\Windows\System32\drivers\AliPaladin*.sys"))
+    for p in DRIVER_FILES_KNOWN:
+        paths.append(p)
+    seen, out = set(), []
+    for p in paths:
+        if p and p.lower() not in seen:
+            seen.add(p.lower())
+            out.append(p)
+    return out
 
 STUB = r"C:\Windows\System32\BLOCKED-By-Admin-No-Exec.exe"
 
@@ -251,7 +281,7 @@ def collect():
         d.update({"pid": pid, "name": name, "parent_pid": ppid})
         snap["processes"].append(d)
 
-    for p in INSTALL_DIRS + DRIVER_FILES:
+    for p in INSTALL_DIRS + driver_paths():
         e = {"exists": os.path.exists(p)}
         if e["exists"]:
             try:

@@ -37,7 +37,35 @@ PROCESS_NAMES = ["alibabaprotect.exe", "alipaladin.exe",
                  "aliprotectupdate.exe", "alibabaprotectcon.exe", "pc-sdk-setup.exe"]
 INSTALL_DIRS = [r"C:\Program Files (x86)\AlibabaProtect"]
 LEFTOVER_DIRS = [r"C:\ProgramData\Alibaba\AlibabaProtectDT"]
-DRIVER_FILES = [r"C:\Windows\System32\drivers\AliPaladinEx64.sys"]
+DRIVER_FILES_KNOWN = [r"C:\Windows\System32\drivers\AliPaladinEx64.sys"]
+
+
+def driver_paths():
+    """应检查的驱动文件：以服务键 ImagePath 现取为准（不同机器/版本可能指向
+    AliPaladin64.sys 等变体），另加 drivers 目录通配与已知默认路径兜底。"""
+    import glob
+    paths = []
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,
+                            r"SYSTEM\CurrentControlSet\Services\AliPaladin") as k:
+            try:
+                ip = winreg.QueryValueEx(k, "ImagePath")[0].strip()
+                if ip.startswith("\\??\\"):
+                    ip = ip[4:]
+                paths.append(ip)
+            except OSError:
+                pass
+    except OSError:
+        pass
+    paths.extend(glob.glob(r"C:\Windows\System32\drivers\AliPaladin*.sys"))
+    paths.extend(DRIVER_FILES_KNOWN)
+    seen, out = set(), []
+    for p in paths:
+        if p and p.lower() not in seen:
+            seen.add(p.lower())
+            out.append(p)
+    return out
 REG_SERVICE_KEYS = [r"SYSTEM\CurrentControlSet\Services\%s" % n for n in SERVICE_NAMES]
 IFEO_NAMES = ["AlibabaProtect.exe", "AliProtectUpdate.exe",
               "AlibabaProtectCon.exe", "pc-sdk-setup.exe"]
@@ -195,7 +223,7 @@ def main():
             results.append((True, "无启用的 Ali 相关计划任务", True, "未发现相关任务"))
 
     # --- 6. 驱动文件不存在（补充项）---
-    for f in DRIVER_FILES:
+    for f in driver_paths():
         if os.path.exists(f):
             results.append((False, "驱动文件不存在", False, "仍存在: %s" % f))
         else:

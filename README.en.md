@@ -2,7 +2,7 @@
 
 **English** · [简体中文](README.md)
 
-> **Note for non-expert readers**: this repo is a forensic record and does not need to be read end-to-end. If you simply noticed a process named `AlibabaProtect.exe` consuming resources and want it gone, go straight to the companion guide **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** — every step from read-only checks to cleanup verification, each with expected output.
+> **Note for non-expert readers**: this repo is a forensic record and does not need to be read end-to-end. If you simply noticed a process named `AlibabaProtect.exe` consuming resources and want it gone, go straight to the companion guide **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** — every step from read-only checks to cleanup verification, each with expected output. If the command line is unfamiliar, hand the guide's link to your AI assistant and have it walk you through, or execute for you; every step carries expected output to verify against.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 

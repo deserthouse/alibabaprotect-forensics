@@ -1,0 +1,10 @@
+* text=auto
+
+# 文档与脚本统一用 LF，避免 Windows/macOS 协作者产生换行符 diff
+*.md    text eol=lf
+*.txt   text eol=lf
+*.py    text eol=lf
+*.json  text eol=lf
+
+# 注册表导出为 UTF-16LE 二进制，禁止换行符转换
+*.reg   -text

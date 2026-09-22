@@ -1,5 +1,7 @@
 # 06 · 防复发：阻断指定程序启动
 
+**简体中文** · [English](06-prevent-recurrence.en.md)
+
 ## 问题
 
 清理是一次性的，但**重装是持续性的**。实测到的三条路径（详见 [04](04-why-hard-to-remove.md)）：

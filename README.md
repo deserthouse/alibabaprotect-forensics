@@ -4,6 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
+**简体中文** · [English](README.en.md)
+
 ---
 
 ## 这个仓库是什么
@@ -39,12 +41,12 @@
 
 | 文档 | 内容 |
 |---|---|
-| [docs/01-what-it-is.md](docs/01-what-it-is.md) | **组件身份**：命名辨析（`AlibabaProtect` / `AliPaladin` / `aliedit` 不要混淆）、组件清单、鉴定方法 |
-| [docs/02-behavior-analysis.md](docs/02-behavior-analysis.md) | **行为能力**：自保护三件套、API 能力枚举、加密配置、构建痕迹 |
-| [docs/03-resource-cost.md](docs/03-resource-cost.md) | **资源开销**：实测数据、指标口径与折算方法；以及"CPU 高时在做什么"的诚实回答 |
-| [docs/04-why-hard-to-remove.md](docs/04-why-hard-to-remove.md) | **为什么删不干净**：回调保护 + SCM 自动恢复 + 客户端重装三条路径 |
-| [docs/05-execution-forensics.md](docs/05-execution-forensics.md) | **拦截生效的证明方法**：Prefetch 指纹 + 一次性探针实验（含完整实验记录） |
-| [docs/06-prevent-recurrence.md](docs/06-prevent-recurrence.md) | **防复发**：IFEO 原理、方案对比、实测负面结果与局限 |
+| [01 · 组件身份](docs/01-what-it-is.md) · [EN](docs/01-what-it-is.en.md) | 命名辨析（`AlibabaProtect` / `AliPaladin` / `aliedit` 不要混淆）、组件清单、鉴定方法 |
+| [02 · 行为分析](docs/02-behavior-analysis.md) · [EN](docs/02-behavior-analysis.en.md) | 自保护三件套、API 能力枚举、加密配置、构建痕迹 |
+| [03 · 资源开销](docs/03-resource-cost.md) · [EN](docs/03-resource-cost.en.md) | 实测数据、指标口径与折算方法；以及"CPU 高时在做什么"的诚实回答 |
+| [04 · 为什么删不干净](docs/04-why-hard-to-remove.md) · [EN](docs/04-why-hard-to-remove.en.md) | 回调保护 + SCM 自动恢复 + 客户端重装三条路径 |
+| [05 · 执行级取证](docs/05-execution-forensics.md) · [EN](docs/05-execution-forensics.en.md) | 拦截生效的证明方法：Prefetch 指纹 + 一次性探针实验（含完整实验记录） |
+| [06 · 防复发](docs/06-prevent-recurrence.md) · [EN](docs/06-prevent-recurrence.en.md) | IFEO 原理、方案对比、实测负面结果与局限 |
 | [evidence/](evidence/) | **脱敏后的原始证据摘录**（注册表导出、事件日志、二进制分析输出） |
 | [scripts/](scripts/) | 只读诊断脚本 |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明与 **AI 使用声明**（中英双语） |

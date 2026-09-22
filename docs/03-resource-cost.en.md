@@ -120,7 +120,7 @@ The user does not need this component's function
 Therefore "what exactly it does" is no longer a decision premise
 ```
 
-**The decision basis is not "it did something bad" but "I don't need it, and it consumes resources".** That basis needs only §1's measured data: 20% of one core, sustained for 7 hours, left behind by clients that were uninstalled.
+**The decision basis is not "it did something bad" but "I don't need it, and it consumes resources".** That basis needs only §1's measured data: 20% of one core, sustained for 7 hours, resident as a system service. (Note: during the investigation the Alibaba clients were still installed on both machines; "still there after the clients are uninstalled" is the companion guide's applicability scenario, not a measured claim of this repo.)
 
 Stating "unproven behavior" as "proven harm" violates the evidence principles and would lower the credibility of this entire document. **This is a deliberate blank this repo keeps.**
 

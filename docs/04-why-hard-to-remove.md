@@ -201,7 +201,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 
 ④ 必须重启
      └─ 内核驱动/过滤器只有重启才真正卸载
-     └─ ⚠️ 启用"快速启动"时，"关机再开机"不会重建内核会话 —— 必须用「重启」
+     └─ ⚠️ 启用"快速启动"时，"关机再开机"不会重建内核会话 —— 必须用“重启”
 
 ⑤ 重启后核验
      └─ 用 05 节的方法证明它没有回来

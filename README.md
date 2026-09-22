@@ -1,6 +1,6 @@
 # AlibabaProtect 小考
 
-**`AlibabaProtect`（显示名 `Alibaba PC Safe Service`）随阿里系客户端安装、以 `LocalSystem` 服务常驻运行，实测消耗约 20% 单核 CPU；配套驱动 70 天内被记录安装 24 次，手动清理需按特定顺序才能不被回滚。本仓库记录完整考证与验证。**
+**`AlibabaProtect`（显示名 `Alibaba PC Safe Service`）随阿里系客户端安装、以 `LocalSystem` 服务常驻运行，实测消耗约 20% 单核 CPU；配套驱动 70 天内被记录安装 24 次，手动清理需按特定顺序才能不被回滚。本仓库记录完整取证与验证。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
@@ -10,7 +10,7 @@
 
 ## 这个仓库是什么
 
-> **非专业读者提示**：本仓库是考证记录，不需要通读。如果你只是发现电脑里有个叫 `AlibabaProtect.exe` 的进程占用很高、想删掉它，直接看配套的操作指南 **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** —— 从只读检查到清理验证，每一步都带预期输出。如果不熟悉命令行，也可以把该指南的链接交给你的 AI 助手，让它按文档逐步讲解或代为执行；每一步都有预期输出可供核对。
+> **非专业读者提示**：本仓库是取证记录，不需要通读。如果你只是发现电脑里有个叫 `AlibabaProtect.exe` 的进程占用很高、想删掉它，直接看配套的操作指南 **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** —— 从只读检查到清理验证，每一步都带预期输出。如果不熟悉命令行，也可以把该指南的链接交给你的 AI 助手，让它按文档逐步讲解或代为执行；每一步都有预期输出可供核对。
 
 **`AlibabaProtect`（显示名 `Alibaba PC Safe Service`，随阿里系客户端安装的后台组件）以 `LocalSystem` 服务开机自启、常驻运行，实测持续消耗约 20% 单核 CPU。**
 

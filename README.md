@@ -2,17 +2,19 @@
 
 **Windows 上 `AlibabaProtect`（显示名 `Alibaba PC Safe Service`）的组件身份、行为证据、资源开销、难卸载机制与清理验证**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
 ---
 
 ## 这个仓库是什么
 
+> **非专业读者提示**：本仓库是取证记录，不需要通读。如果你只是发现电脑里有个叫 `AlibabaProtect.exe` 的进程占用很高、想删掉它，直接看配套的操作指南 **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** —— 从只读检查到清理验证，每一步都带预期输出。
+
 一台 Windows 机器上出现了**卸载了阿里系客户端之后仍然常驻、且消耗可观 CPU 的 `AlibabaProtect.exe`**。本仓库把这台机器上采集到的证据、可复现的判定方法和每一步的验证结果整理成文档。
 
 **只讲 `AlibabaProtect` 这一个组件。** 不含通用内存分析、不含其他厂商组件、不含与本组件无关的系统调优内容。
 
-配套的操作步骤在另一个仓库：[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)。本仓库回答「**它是什么、凭什么这么判断、删干净了没有**」，指南仓库回答「**怎么删**」。
+配套的操作步骤在另一个仓库：[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)。本仓库回答**它是什么、凭什么这么判断、是否已清理干净**；指南仓库回答**怎么删**。
 
 ---
 
@@ -37,11 +39,11 @@
 
 | 文档 | 内容 |
 |---|---|
-| [docs/01-what-it-is.md](docs/01-what-it-is.md) | **它是谁**：命名辨析（`AlibabaProtect` / `AliPaladin` / `aliedit` 不要混淆）、组件清单、身份鉴定的方法 |
-| [docs/02-behavior-analysis.md](docs/02-behavior-analysis.md) | **它有什么能力**：自保护三件套、API 能力枚举、加密配置、构建痕迹 |
-| [docs/03-resource-cost.md](docs/03-resource-cost.md) | **它占多少资源**：实测数据、指标口径与折算方法；以及"CPU 高时在干什么"的诚实回答 |
+| [docs/01-what-it-is.md](docs/01-what-it-is.md) | **组件身份**：命名辨析（`AlibabaProtect` / `AliPaladin` / `aliedit` 不要混淆）、组件清单、鉴定方法 |
+| [docs/02-behavior-analysis.md](docs/02-behavior-analysis.md) | **行为能力**：自保护三件套、API 能力枚举、加密配置、构建痕迹 |
+| [docs/03-resource-cost.md](docs/03-resource-cost.md) | **资源开销**：实测数据、指标口径与折算方法；以及"CPU 高时在做什么"的诚实回答 |
 | [docs/04-why-hard-to-remove.md](docs/04-why-hard-to-remove.md) | **为什么删不干净**：回调保护 + SCM 自动恢复 + 客户端重装三条路径 |
-| [docs/05-execution-forensics.md](docs/05-execution-forensics.md) | **怎么证明"拦住了"**：Prefetch 指纹 + 一次性探针实验（含完整实验记录） |
+| [docs/05-execution-forensics.md](docs/05-execution-forensics.md) | **拦截生效的证明方法**：Prefetch 指纹 + 一次性探针实验（含完整实验记录） |
 | [docs/06-prevent-recurrence.md](docs/06-prevent-recurrence.md) | **防复发**：IFEO 原理、方案对比、实测负面结果与局限 |
 | [evidence/](evidence/) | **脱敏后的原始证据摘录**（注册表导出、事件日志、二进制分析输出） |
 | [scripts/](scripts/) | 只读诊断脚本 |

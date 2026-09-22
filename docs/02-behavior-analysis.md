@@ -198,4 +198,4 @@ https://reverseengineering.stackexchange.com/questions/14171/thread-local-storag
 
 ---
 
-上一篇：[01 · 它是谁](01-what-it-is.md) ｜ 下一篇：[03 · 资源开销实测](03-resource-cost.md)
+上一篇：[01 · 组件身份](01-what-it-is.md) ｜ 下一篇：[03 · 资源开销实测](03-resource-cost.md)

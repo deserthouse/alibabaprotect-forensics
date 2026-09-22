@@ -4,7 +4,7 @@
 
 ---
 
-## 1. 三条"复活"路径总览
+## 1. 三条重新出现路径总览
 
 | 路径 | 触发条件 | 实测证据 |
 |---|---|---|
@@ -48,7 +48,7 @@
 
 要点：
 
-- **这是"没有看门狗也能自我复活"的机制** —— 恢复动作由 SCM 执行，不由任何进程执行，因此**杀进程无效**。
+- **该恢复不依赖任何守护进程** —— 恢复动作由 SCM（服务控制管理器）执行，与该软件自己的进程是否存活无关，因此**只结束进程无效**。
 - **应对只有一个：删除服务本身**（`sc delete`），而不是禁用或结束进程。服务注册项消失后，SCM 没有可重启的对象。
 - 同类事件还有 `7034`（意外终止、无重启动作）、`7023`（因错误停止）—— 可用于还原崩溃历史。
 
@@ -140,7 +140,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 
 ⇒ 这直接证明：**一次性清理不足以维持干净状态**，需要"防复发"措施（见 06）。
 
-### 半清理态实测：复活尝试被"文件缺失"阻断（第二台机器）
+### 半清理态实测：重新安装尝试被"文件缺失"阻断（第二台机器）
 
 一台**只删了文件、未做任何拦截**（无 IFEO）的机器，`AliUpdater` 每小时仍运行一次，但每次尝试都失败：
 
@@ -152,7 +152,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 
 两点启示（完整数据见 `evidence/partial-cleanup-state.txt`）：
 
-1. **"文件缺失"本身就是一道阻断** —— 复活路径 C 需要"安装器能落地"才成立；
+1. **"文件缺失"本身就是一道阻断** —— 重新安装路径 C 需要"安装器能落地"才成立；
 2. **"没装回来" ≠ "没有在试"** —— 半清理状态会长期持续产生低噪声尝试痕迹。这也是 05 节"试了但进不来"判定的**另一条独立证据路径**（不依赖 IFEO / Prefetch）。
 
 ---
@@ -228,7 +228,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 | 清理过程实录 | `evidence/cleanup-log.txt` |
 | 回调注册证据 | `evidence/driver-AliPaladin-functions.txt` |
 | 微过滤器的注册表侧证据 | `evidence/service-AliPaladin-minifilter.txt` |
-| 半清理态的持续复活尝试（第二台机器） | `evidence/partial-cleanup-state.txt` |
+| 半清理态的持续重新安装尝试（第二台机器） | `evidence/partial-cleanup-state.txt` |
 
 ---
 

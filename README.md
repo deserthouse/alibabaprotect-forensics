@@ -14,8 +14,6 @@
 
 **`AlibabaProtect`（显示名 `Alibaba PC Safe Service`，阿里系客户端附带的常驻组件）在客户端卸载后仍留在后台运行，实测持续消耗约 20% 单核 CPU。** 本仓库记录完整取证：它是什么、凭什么这么判断、以及如何验证已删干净。
 
-只讲这一个组件，不含通用内存分析或其他厂商内容。
-
 配套的操作步骤在另一个仓库：[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)。本仓库回答**它是什么、凭什么这么判断、是否已清理干净**；指南仓库回答**怎么删**。
 
 ---

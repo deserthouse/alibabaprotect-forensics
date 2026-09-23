@@ -16,6 +16,8 @@
 
 The author examines **what it is, on what evidence, and whether it is gone**; the hands-on steps live in the companion repo [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide) — it answers **how to remove it**.
 
+Same case family (the author's other forensic repos): [OMEN Gaming Hub dual leaks](https://github.com/deserthouse/omen-gaming-hub-pool-leak-forensics), [Windows Delivery-Optimization seeding leak](https://github.com/deserthouse/windows-delivery-optimization-pool-leak-forensics).
+
 ---
 
 ## Contents

@@ -16,6 +16,8 @@
 
 笔者考证**它是什么、凭什么这么判断、是否已删干净**；配套的操作步骤在另一个仓库 [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)——它回答**怎么删**。
 
+同族案件（笔者的其他取证仓）：[OMEN Gaming Hub 双泄漏](https://github.com/deserthouse/omen-gaming-hub-pool-leak-forensics)、[Windows 传递优化做种泄漏](https://github.com/deserthouse/windows-delivery-optimization-pool-leak-forensics)。
+
 ---
 
 ## 目录

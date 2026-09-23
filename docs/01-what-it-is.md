@@ -115,6 +115,7 @@ AliPaladin_win7_last.sys    AliPaladinEx64.sys        ← 本机实际加载的�
 | `BluePerfmon4_*.sys`（6 个变体） | **`Windows (R) Win 7 DDK provider`** / `Blue Perfmon Driver` / `1.0.1.5` | 又一个内核驱动，签名者字符串是**旧 DDK 占位名** |
 | `arphadump.dll` / `arphaCrashReport.exe` | `2.2.66` / `Alibaba Group` | 崩溃采集 |
 | `courgette.dll` | — | 二进制差分更新（Chromium 项目组件） |
+| `qnacctool.exe` | —（版本资源为空） | **角色不明**：名字含 `qn`（千牛？），未证实 |
 
 三点值得注意：
 

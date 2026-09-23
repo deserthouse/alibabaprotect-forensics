@@ -115,6 +115,7 @@ The metadata of every executable in the install directory reveals the division o
 | `BluePerfmon4_*.sys` (6 variants) | **`Windows (R) Win 7 DDK provider`** / `Blue Perfmon Driver` / `1.0.1.5` | Yet another kernel driver; the signer string is an **old-DDK placeholder** |
 | `arphadump.dll` / `arphaCrashReport.exe` | `2.2.66` / `Alibaba Group` | Crash collection |
 | `courgette.dll` | — | Binary differential update (a Chromium project component) |
+| `qnacctool.exe` | — (version resource empty) | **Role unclear**: name contains `qn` (Qianniu?), unconfirmed |
 
 Three points worth noting:
 

@@ -56,12 +56,14 @@ Whole-machine share = 20.1% ÷ 16 ≈ 1.26%
 | Limitation | Impact |
 |---|---|
 | Only **two points in time**, no continuous curve | No range of variation; cannot rule out "heavier in some intervals" |
-| **Peak instantaneous usage** not captured | The user-perceived "occasional stutters" were not recorded |
+| Instantaneous usage exists only as **one** 1-second delta estimate (~45% of one core / ≈2.8% whole-machine, see note below) | Single sample, crude method — magnitude reference only, not a peak conclusion |
 | No **thread-level** sampling | Total process time only; unknown which threads consumed it |
 | **Single-machine data** | Other configurations/versions may behave differently |
 | Cumulative values affected by **uptime** | Corrected via average utilization, see §1 |
 
-**These limitations do not change the conclusion "it steadily consumes ~20% of one core", but they mean "what its peak could be" cannot be inferred from this data.**
+**These limitations do not change the conclusion "it steadily consumes ~20% of one core".**
+
+> **Note (instantaneous sample)**: during the pre-remediation process inventory, one 1-second CPU-delta estimate was taken: `AlibabaProtect ≈ 2.8% whole-machine` (÷16 ≈ **45% of one core**). Single reading, short window, crude method — it only shows the instantaneous level can run well above the 20%-of-one-core steady average; it does not bound the peak.
 
 ---
 

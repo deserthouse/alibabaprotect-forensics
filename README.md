@@ -63,7 +63,7 @@
 | [05 · 执行级取证](docs/05-execution-forensics.md) · [EN](docs/05-execution-forensics.en.md) | 拦截生效的证明方法：Prefetch 指纹 + 一次性探针实验（含完整实验记录） |
 | [06 · 防复发](docs/06-prevent-recurrence.md) · [EN](docs/06-prevent-recurrence.en.md) | IFEO 原理、方案对比、实测负面结果与局限 |
 | [evidence/](evidence/) | **脱敏后的原始证据摘录**（注册表导出、事件日志、二进制分析输出） |
-| [scripts/](scripts/) | 只读诊断脚本 |
+| [scripts/](scripts/) | 诊断脚本：snapshot/verify 只读；ifeo_block 含可逆注册表写入（见下表与 [DISCLAIMER.md](DISCLAIMER.md)） |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明与 **AI 使用声明**（中英双语） |
 
 ---

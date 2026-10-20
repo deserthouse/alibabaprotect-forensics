@@ -19,15 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Scope note
-
-This repository contains analysis documentation and read-only diagnostic
-scripts. It does not distribute any binary, installer, or compiled artifact,
-and it is not affiliated with, endorsed by, or sponsored by any vendor
-mentioned within it.
-
-The scripts are intended for read-only inspection of a system you own and
-administer. See DISCLAIMER.md for the intended-use statement.

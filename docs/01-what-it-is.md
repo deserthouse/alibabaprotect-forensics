@@ -71,7 +71,7 @@ C:\Program Files (x86)\AlibabaProtect\
 | **`OriginalFilename`** | **`AliPaladin.dll`** |
 | 文件大小 | 177,880 字节 |
 
-⭐ **`OriginalFilename` 写的是 `.dll`，而它实际以 `.sys` 形态加载。** 这一栏厂商改名/改扩展名时经常忘了改 —— 它说明这个驱动与某个用户态 DLL **同源或由同一个工程产出**。
+⭐ `OriginalFilename` 写的是 `.dll` 而实际以 `.sys` 加载——字段**原样记录**（改名/改扩展时未改这一栏是常见现象）；“与用户态 DLL 同源/同一工程产出”降级为**线索级推测**，不构成证明。
 
 ### 包里一共 8 个驱动变体
 
@@ -119,7 +119,7 @@ AliPaladin_win7_last.sys    AliPaladinEx64.sys        ← 本机实际加载的�
 
 三点值得注意：
 
-1. **`msvcp120.dll` / `msvcr120.dll` 的版本串是 `built by: REL AliSec`** —— 这是**阿里安全团队自己编译**的运行时，不是微软原版。同一机器的系统目录里也有同名 DLL，但两者不是一回事。
+1. `msvcp120.dll` / `msvcr120.dll` 的版本串是 `built by: REL AliSec`——表明**非微软原版分发**（自定义构建或重分发）；“由阿里安全团队自行编译”是版本串字面推断，未经 Authenticode 签名核实。
 2. **`BluePerfmon4_*.sys` 的签名者字符串是 `Windows (R) Win 7 DDK provider`** —— 这是**旧 DDK 编译产物的典型占位字符串**，不是一家公司名。看到这个字符串不代表"来自微软"，只代表"用旧 DDK 构建"。
 3. `courgette.dll` 出现在安装目录里，说明更新机制使用**二进制差分**（只下差异部分），这也解释了为什么它更新频繁但体积增量小。
 

@@ -197,7 +197,7 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
      └─ 注意：delete 只标记删除、不终止运行中的进程 —— 进程由 ③ 之前单独结束
 
 ③ 然后删文件与目录
-     └─ 此时微过滤器已不再被加载，删除通常不再受阻
+     └─ 【2026-10-21 更正】`sc delete` 只是标记删除，**不会卸载正在运行的驱动**（本机历史清理时驱动已 Stopped，不能把“标记删除后可删文件”泛化到驱动仍在运行的机器；1062 是“服务未启动”，不是“在线不可停止”的证据）。未确认驱动已卸载前，不承诺文件可删
 
 ④ 必须重启
      └─ 内核驱动/过滤器只有重启才真正卸载
@@ -212,8 +212,8 @@ HKLM\SYSTEM\CurrentControlSet\Services\AlibabaProtect\FailureActions
 若服务运行中拒绝一切修改，改用**两次重启**的迂回：
 
 1. **第一阶段**：在服务仍运行时只做 `sc config AlibabaProtect start= disabled`
-2. **重启**（此时它不会被拉起，进程与文件占用都消失）
-3. **第二阶段**：重启后执行完整的 ②–⑤（通常不再受阻）
+2. **读回门禁（必须）**：`sc qc` 确认 `DISABLED`，等约 30 秒复读仍为 `DISABLED` 才继续——本文第 3 节刚记录过该配置**可能被回滚**，不读回不得承诺“重启后不会被拉起”（完整分支见配套指南第四节）
+3. **重启**；`sc query` 确认 `STOPPED`/1060 后再进入第二阶段：执行完整的 ②–⑤（以读回结果为准，不默认已停用）
 
 具体命令见配套的 [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)。
 

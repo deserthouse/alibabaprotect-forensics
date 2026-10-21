@@ -63,7 +63,7 @@
 | [05 · 执行级取证](docs/05-execution-forensics.md) · [EN](docs/05-execution-forensics.en.md) | 拦截生效的证明方法：Prefetch 指纹 + 一次性探针实验（含完整实验记录） |
 | [06 · 防复发](docs/06-prevent-recurrence.md) · [EN](docs/06-prevent-recurrence.en.md) | IFEO 原理、方案对比、实测负面结果与局限 |
 | [evidence/](evidence/) | **脱敏后的原始证据摘录**（注册表导出、事件日志、二进制分析输出） |
-| [scripts/](scripts/) | 诊断脚本：snapshot/verify 只读；ifeo_block 含可逆注册表写入（见下表与 [DISCLAIMER.md](DISCLAIMER.md)） |
+| [scripts/](scripts/) | 诊断脚本：snapshot/verify 只读；ifeo_block 各模式行为见下表与 [DISCLAIMER.md](DISCLAIMER.md)（--status 只读；--apply/--remove 写注册表；--probe 需管理员，做一次性实验：临时写删 IFEO 键 + 复制执行系统程序） |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明与 **AI 使用声明**（中英双语） |
 
 ---
@@ -74,7 +74,7 @@
 |---|---|---|---|
 | `scripts/snapshot_before.py` | 清理前状态快照：服务 / 进程 / 计划任务 / 目录 / 驱动，输出可存档的 JSON + 可读报告 | 否（只读） | 否 |
 | `scripts/verify_clean.py` | 清理后核验：五项目标逐条判定，输出 `通过 / 未通过` | 否（只读） | 否 |
-| `scripts/ifeo_block.py` | IFEO 拦截的**建立与一键还原**（`--remove`） | **是**（可逆，仅注册表） | 是 |
+| `scripts/ifeo_block.py` | IFEO 拦截的**建立与一键还原**（`--remove`）；`--probe` 为一次性拦截验证实验 | **是**（--apply/--remove 写注册表；--probe 临时写删 IFEO 键 + 复制执行系统 `hostname.exe`；均不删除客户端安装文件） | 是 |
 
 ```bash
 # 1) 清理前留档（建议在动任何东西之前先跑）

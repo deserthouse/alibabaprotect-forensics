@@ -74,6 +74,7 @@ IFEO_ROOT = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution 
 kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 
 TH32CS_SNAPPROCESS = 0x00000002
+INVALID_HANDLE_VALUE = 0xFFFFFFFF
 
 
 class PROCESSENTRY32W(ctypes.Structure):
@@ -84,6 +85,16 @@ class PROCESSENTRY32W(ctypes.Structure):
         ("pcPriClassBase", ctypes.c_long), ("dwFlags", wt.DWORD),
         ("szExeFile", wt.WCHAR * 260),
     ]
+
+
+# AF-03：显式声明 Win32 签名（x64 下句柄截断会表现为"快照失败→空列表"）
+kernel32.CreateToolhelp32Snapshot.restype = ctypes.c_void_p
+kernel32.CreateToolhelp32Snapshot.argtypes = [wt.DWORD, wt.DWORD]
+kernel32.Process32FirstW.restype = wt.BOOL
+kernel32.Process32FirstW.argtypes = [ctypes.c_void_p, ctypes.POINTER(PROCESSENTRY32W)]
+kernel32.Process32NextW.restype = wt.BOOL
+kernel32.Process32NextW.argtypes = [ctypes.c_void_p, ctypes.POINTER(PROCESSENTRY32W)]
+kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
 
 
 # ----------------------------------------------------------------------- 检测原语
@@ -105,7 +116,7 @@ def run_text(args, timeout=40, with_rc=False):
 
 
 def service_query(name):
-    """返回 (exists: bool, raw_text)"""
+    """返回 (state, raw_text)：True=存在 / False=确认不存在 / None=查询失败（AF-03 三态）"""
     try:
         text, rc = run_text(["sc.exe", "query", name], timeout=15, with_rc=True)
     except Exception as e:                                     # noqa: BLE001
@@ -115,18 +126,25 @@ def service_query(name):
     # 2   = ERROR_FILE_NOT_FOUND（注册表键已删、SCM 数据库未刷新的过渡态）
     if rc in (1060, 2):
         return False, text
-    return True, text
+    if rc == 0:
+        return True, text
+    return None, "sc query 退出码 %s（非 0/1060/2），不能确认服务状态" % rc
 
 
 def reg_key_exists(path):
+    """AF-03 三态：True=存在 / False=确认不存在 / None=查询失败（如拒绝访问）。
+
+    只有 FileNotFoundError 视为"不存在"；其它 OSError（权限等）不得当作不存在。"""
     try:
         import winreg
-        try:
-            winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path).Close()
-            return True
-        except OSError:
-            return False
     except ImportError:
+        return None
+    try:
+        winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path).Close()
+        return True
+    except FileNotFoundError:
+        return False
+    except OSError:
         return None
 
 
@@ -140,10 +158,13 @@ def reg_read(path, value):
 
 
 def enum_processes(names):
+    """返回进程命中列表；快照失败返回 None（AF-03：失败≠空列表）。
+
+    None 必须被调用方当作"未知"处理，不得判为"未发现进程"。"""
     found = []
     snap = kernel32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
-    if not snap or snap == ctypes.c_void_p(-1).value:
-        return found
+    if not snap or snap == INVALID_HANDLE_VALUE:
+        return None
     try:
         pe = PROCESSENTRY32W()
         pe.dwSize = ctypes.sizeof(PROCESSENTRY32W)
@@ -158,16 +179,25 @@ def enum_processes(names):
 
 
 def find_tasks(prefix="Ali"):
+    """枚举名称任一路径段以 prefix 开头的计划任务（AF-03：含文件夹路径的任务）。
+
+    返回 (hits, err)：schtasks 非零退出或无输出 → err 非空（查询失败≠无任务）。"""
     hits, err = [], None
     try:
-        text = run_text(["schtasks", "/query", "/fo", "CSV", "/nh"])
+        text, rc = run_text(["schtasks", "/query", "/fo", "CSV", "/nh"],
+                            with_rc=True)
+        if rc != 0:
+            return [], "schtasks 退出码 %s，输出不可作为判定依据" % rc
+        if not text.strip():
+            return [], "schtasks 无输出（异常），不能判定为无相关任务"
         for line in text.splitlines():
             line = line.strip()
             if not line.startswith('"'):
                 continue
-            name = line.split('","')[0].strip('"').lstrip("\\")
-            if name.lower().startswith(prefix.lower()):
-                parts = [x.strip('"') for x in line.split('","')]
+            parts = [x.strip('"') for x in line.split('","')]
+            name = parts[0].lstrip("\\") if parts else ""
+            segs = [s for s in name.split("\\") if s]
+            if any(s.lower().startswith(prefix.lower()) for s in segs):
                 hits.append((name, parts[2] if len(parts) > 2 else ""))
     except Exception as e:                                     # noqa: BLE001
         err = str(e)
@@ -192,7 +222,10 @@ def main():
 
     # --- 2. 进程不在运行 ---
     procs = enum_processes({n.lower() for n in PROCESS_NAMES})
-    if procs:
+    if procs is None:
+        results.append((True, "相关进程未运行", False,
+                        "进程快照失败（未知）—— 不能判定为未运行（AF-03）"))
+    elif procs:
         results.append((True, "相关进程未运行", False,
                         "仍在运行: " + ", ".join("%s(PID=%d)" % (n, p) for p, n in procs)))
     else:
@@ -207,11 +240,16 @@ def main():
 
     # --- 4. 服务注册表键不存在 ---
     for key in REG_SERVICE_KEYS:
-        if reg_key_exists(key):
+        state = reg_key_exists(key)
+        if state is True:
             results.append((True, "注册表键 %s 不存在" % key.split("\\")[-1], False,
                             r"HKLM\%s 仍存在" % key))
+        elif state is None:
+            results.append((True, "注册表键 %s 不存在" % key.split("\\")[-1], False,
+                            "查询失败（权限等，未知）—— 不能判定为不存在（AF-03）"))
         else:
-            results.append((True, "注册表键 %s 不存在" % key.split("\\")[-1], True, "已确认找不到项"))
+            results.append((True, "注册表键 %s 不存在" % key.split("\\")[-1], True,
+                            "已确认找不到项"))
 
     # --- 5. 无相关计划任务（或已禁用）---
     tasks, err = find_tasks("Ali")
@@ -248,15 +286,24 @@ def main():
             results.append((False, "残留数据目录已清理", True, d))
 
     # --- 8. IFEO 信息项 ---
-    blocked = []
+    # AF-03：只有值等于本工具桩才算"已拦截"；非空 Debugger ≠ 被本工具拦截
+    STUB = r"C:\Windows\System32\BLOCKED-By-Admin-No-Exec.exe"
+    blocked, foreign = [], []
     for name in IFEO_NAMES:
         path = r"%s\%s" % (IFEO_ROOT, name)
-        if reg_read(path, "Debugger"):
+        dbg = reg_read(path, "Debugger")
+        if not dbg:
+            continue
+        if str(dbg).strip().lower() == STUB.lower():
             blocked.append(name)
-    results.append((False, "防复发状态（信息项）", True,
-                    "已拦截 %d/%d 个映像：%s" % (len(blocked), len(IFEO_NAMES),
-                                             ", ".join(blocked)) if blocked
-                    else "未设置 IFEO 拦截 —— 客户端更新时可能被重新安装"))
+        else:
+            foreign.append(name)
+    msg = "已拦截 %d/%d 个映像（本工具桩）：%s" % (len(blocked), len(IFEO_NAMES),
+                                             ", ".join(blocked)) if blocked \
+        else "未设置 IFEO 拦截 —— 客户端更新时可能被重新安装"
+    if foreign:
+        msg += "；另有非本工具 Debugger（含义未知，未计入）：%s" % ", ".join(foreign)
+    results.append((False, "防复发状态（信息项）", True, msg))
 
     # ------------------------------------------------------------------ 输出
     core = [r for r in results if r[0]]

@@ -106,6 +106,13 @@ def delete_key(name):
     winreg.DeleteKey(winreg.HKEY_LOCAL_MACHINE, key_path(name))
 
 
+def delete_value(name, value_name):
+    import winreg
+    with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path(name), 0,
+                        winreg.KEY_SET_VALUE) as k:
+        winreg.DeleteValue(k, value_name)
+
+
 def is_our_stub(value):
     return bool(value) and value.strip().lower() == STUB.lower()
 
@@ -156,6 +163,18 @@ def write_key_values(name, values):
             winreg.SetValueEx(k, vname, 0, vtype, vdata)
 
 
+def restore_key(name, values):
+    """恢复原键值，并撤除本工具加入的改动（AF-01）：
+
+    1. 写回备份中的全部值；
+    2. 若备份值里没有 Debugger、而当前 Debugger 是本工具桩 —— 删除该值
+       （此前的实现只写回原值、不删后加的 Debugger，导致"还原成功但仍被拦截"）。
+    其余当前存在但备份里没有的值（可能来自第三方）不动。"""
+    write_key_values(name, values)
+    if "Debugger" not in values and is_our_stub(get_debugger(name)):
+        delete_value(name, "Debugger")
+
+
 # --------------------------------------------------------------------------- 备份
 
 def backup_path():
@@ -163,28 +182,44 @@ def backup_path():
 
 
 def save_backup(entries):
-    """把"建立拦截之前"的状态存下来，供还原时判断该删还是该恢复。"""
+    """持久化备份并回读校验（AF-02）：原子写入（临时文件 + os.replace），
+
+    写后重新解析并与待存内容比对，校验不过视为失败。
+    只在【首次修改前】调用；已记录的条目不会被重写。"""
     path = backup_path()
-    old = {}
-    if os.path.isfile(path):
+    tmp = path + ".tmp"
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(entries, f, ensure_ascii=False, indent=2)
+        back = json.load(open(tmp, encoding="utf-8"))
+        if back != entries:
+            raise ValueError("回读内容与待存内容不一致")
+        os.replace(tmp, path)
+    except Exception as e:                                        # noqa: BLE001
         try:
-            old = json.load(open(path, encoding="utf-8"))
-        except Exception:                                      # noqa: BLE001
-            old = {}
-    old.update(entries)
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(old, f, ensure_ascii=False, indent=2)
+            os.unlink(tmp)
+        except OSError:
+            pass
+        print("✗ 备份无法持久化或校验失败（%s）。" % e)
+        return None
     return path
 
 
 def load_backup():
+    """读取备份。返回 (entries, problem)：problem 为 None / "missing" / "corrupt"。
+
+    调用方必须区分三种状态：损坏/缺失时不得猜测"原态不存在"（AF-02 失败关闭）。"""
     path = backup_path()
     if not os.path.isfile(path):
-        return {}
+        return {}, "missing"
     try:
-        return json.load(open(path, encoding="utf-8"))
-    except Exception:                                          # noqa: BLE001
-        return {}
+        data = json.load(open(path, encoding="utf-8"))
+        if not isinstance(data, dict):
+            raise ValueError("备份顶层不是对象")
+        return data, None
+    except Exception as e:                                        # noqa: BLE001
+        print("✗ 备份文件损坏（%s）: %s" % (path, e))
+        return {}, "corrupt"
 
 
 # --------------------------------------------------------------------------- 命令
@@ -225,12 +260,15 @@ def cmd_apply(force=False):
     print("")
     if not check_stub_absent():
         return 1
-    before = {}
+    bak, problem = load_backup()
+    if problem == "corrupt":
+        print("✗ 备份文件损坏 —— 拒绝继续（继续可能丢失既有条目的原态）。")
+        print("  请人工检查 %s 后再试。" % backup_path())
+        return 1
+    plan = []           # 本次将写入的 (名字, 原态快照)
     changed, skipped, failed = [], [], []
     for name in TARGETS:
         cur = get_debugger(name)
-        before[name] = {"existed": key_exists(name), "debugger": cur,
-                        "values": read_key_values(name)}
         if cur is not None and not is_our_stub(cur) and not force:
             skipped.append((name, cur))
             print("  [跳过] %-24s 已存在其它 Debugger: %s（用 --force 覆盖）" % (name, cur))
@@ -238,6 +276,21 @@ def cmd_apply(force=False):
         if is_our_stub(cur):
             print("  [已是] %-24s 已由本工具拦截" % name)
             continue
+        plan.append((name, {"existed": key_exists(name), "debugger": cur,
+                            "values": read_key_values(name)}))
+    if plan:
+        # AF-02：备份在【任何注册表写入之前】持久化并校验；
+        # 已在备份中的条目不重写（避免部分失败后重试把"原态"覆盖成"已拦截态"）。
+        merged = dict(bak)
+        for name, snap in plan:
+            merged.setdefault(name, snap)
+        p = save_backup(merged)
+        if p is None:
+            print("✗ 未做任何注册表修改（备份先行失败）。")
+            return 1
+        print("  已备份原状态 → %s（先备份后写入）" % p)
+    print("")
+    for name, _snap in plan:
         try:
             set_debugger(name, STUB)
         except PermissionError as e:
@@ -251,16 +304,13 @@ def cmd_apply(force=False):
         ok = is_our_stub(now)
         changed.append(name)
         print("  [%s] %-24s Debugger → %s" % ("成功" if ok else "失败", name, now))
-
-    if changed:
-        p = save_backup(before)
-        print("\n  已备份原状态 → %s" % p)
     print("")
     print("  新建/更新 %d 项，跳过 %d 项，失败 %d 项"
           % (len(changed), len(skipped), len(failed)))
     print("")
     if failed:
-        print("  ⚠️ 有 %d 项写入失败 —— 拦截不完整，请先处理后再验证。" % len(failed))
+        print("  ⚠️ 有 %d 项写入失败 —— 拦截不完整。原态备份已保存，重试直接再跑本命令" % len(failed))
+        print("     即可（不会覆盖已记录的原态）。")
     else:
         print("  ⚠️ 只写注册表还不够，请用 --probe 做功能验证（见文档 05）。")
     print("=" * 78)
@@ -281,8 +331,8 @@ def cmd_remove(assume_yes=False):
     print("=" * 78)
     print("还原 IFEO 拦截")
     print("=" * 78)
-    bak = load_backup()
-    removed, restored, kept = [], [], []
+    bak, problem = load_backup()
+    removed, restored, kept, held = [], [], [], []
     for name in TARGETS:
         cur = get_debugger(name)
         if cur is None and not key_exists(name):
@@ -292,13 +342,21 @@ def cmd_remove(assume_yes=False):
             kept.append(name)
             print("  [保留] %-24s Debugger 非本工具桩，未改动" % name)
             continue
-        orig = bak.get(name) or {}
-        if orig.get("existed") and orig.get("values") is not None:
-            write_key_values(name, orig["values"])
+        orig = bak.get(name)
+        # AF-02 失败关闭：备份缺失/损坏时不猜测"原态不存在"，不删不改，转人工。
+        if orig is None and problem in ("missing", "corrupt"):
+            held.append(name)
+            print("  [止手] %-24s 桩存在但备份%s —— 不自动删除/恢复。" %
+                  (name, "文件缺失" if problem == "missing" else "文件损坏"))
+            print("         人工路径：注册表 HKLM\\%s\\%s 删除 Debugger 值，"
+                  "或确认无需保留后删键。" % (IFEO_ROOT, name))
+            continue
+        if orig is not None and orig.get("existed") and orig.get("values") is not None:
+            restore_key(name, orig["values"])
             restored.append(name)
-            print("  [恢复] %-24s 原键值已完整写回（%d 个值）"
+            print("  [恢复] %-24s 原键值已写回并撤除本工具 Debugger（%d 个值）"
                   % (name, len(orig["values"])))
-        elif orig.get("existed") and orig.get("debugger"):
+        elif orig is not None and orig.get("existed") and orig.get("debugger"):
             # 旧版备份只有 debugger 字段（无全值快照），尽力恢复已知值
             set_debugger(name, orig["debugger"])
             restored.append(name)
@@ -307,9 +365,13 @@ def cmd_remove(assume_yes=False):
         else:
             delete_key(name)
             removed.append(name)
-            print("  [删除] %-24s 键已删除" % name)
+            print("  [删除] %-24s 键已删除（备份记录：原键不存在）" % name)
     print("")
-    print("  删除 %d 项，恢复 %d 项，保留 %d 项" % (len(removed), len(restored), len(kept)))
+    print("  删除 %d 项，恢复 %d 项，保留 %d 项，止手 %d 项"
+          % (len(removed), len(restored), len(kept), len(held)))
+    if held:
+        print("  ⚠️ 有条目因备份缺失/损坏未处理 —— 拦截仍在生效，请按上面的人工路径处理。")
+        return 1
     print("=" * 78)
     return 0
 

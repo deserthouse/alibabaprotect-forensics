@@ -24,7 +24,7 @@ The author examines **what it is, on what evidence, and whether it is gone**; th
 - [Findings at a glance](#findings-at-a-glance)
 - [Docs](#docs)
 - [Scripts](#scripts)
-- [Evidence and statement discipline](#evidence--statement-discipline)
+- [Evidence and statement discipline](#evidence-and-statement-discipline)
 - [Disclaimer](#disclaimer)
 
 ---

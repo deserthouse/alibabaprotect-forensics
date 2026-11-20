@@ -100,7 +100,7 @@ not what it is doing. Anything without direct evidence is marked **unconfirmed**
 
 ### AI Usage Statement
 
-AI tools were **substantially involved** in the research, forensic analysis, and drafting of this project
+This project contains no human ingredients. AI tools were **substantially involved** in the research, forensic analysis, and drafting of this project
 (code assistance and text organization). However:
 
 - All **research goals, cleanup decisions, and final acceptance were made by the human author**;

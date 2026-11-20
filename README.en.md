@@ -1,18 +1,16 @@
 # AlibabaProtect Forensics
 
-**English** · [简体中文](README.md)
+A single-machine study of the AlibabaProtect service on Windows. Across a roughly seven-hour interval, CPU time averaged about 20% of one core. Some proposed self-protection mechanisms remain unconfirmed.
 
-> **Note for non-expert readers**: this repo is a forensic record and does not need to be read end-to-end. If you simply noticed a process named `AlibabaProtect.exe` consuming resources and want it gone, go straight to the companion guide **[alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide)** — every step from read-only checks to cleanup verification, each with expected output. If the command line is unfamiliar, hand the guide's link to your AI assistant and have it walk you through, or execute for you; every step carries expected output to verify against.
+[Findings](#findings-at-a-glance) · [Case documents](#docs)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
+**English** · [简体中文](README.md) · [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
-**`AlibabaProtect` (display name `Alibaba PC Safe Service`) installs alongside Alibaba-family clients and runs as a resident `LocalSystem` service, measured at a sustained ~20% of one core; its companion driver was recorded installed 24 times in 70 days, and manual removal must follow a specific order or it gets rolled back. This repo documents the full forensics and verification.**
-
----
+**Sample** · Windows 10/11 x64, service versions around `1.0.70.3194`. Sampled September 2026 and reviewed October 21, 2026.
 
 ## What this is
 
-**`AlibabaProtect` (display name `Alibaba PC Safe Service`, a background component installed alongside Alibaba-family clients) runs as an auto-start `LocalSystem` service and consumed a sustained ~20% of one core in measurement.**
+The service runs as an auto-start `LocalSystem` service. The linked documents separate measured resource usage from proposed explanations.
 
 The author examines **what it is, on what evidence, and whether it is gone**; the hands-on steps live in the companion repo [alibabaprotect-uninstall-guide](https://github.com/deserthouse/alibabaprotect-uninstall-guide) — it answers **how to remove it**.
 
@@ -20,12 +18,17 @@ The author examines **what it is, on what evidence, and whether it is gone**; th
 
 ## Contents
 
+<details>
+<summary>Show all sections</summary>
+
 - [What this is](#what-this-is)
 - [Findings at a glance](#findings-at-a-glance)
 - [Docs](#docs)
 - [Scripts](#scripts)
 - [Evidence and statement discipline](#evidence-and-statement-discipline)
 - [Disclaimer](#disclaimer)
+
+</details>
 
 ---
 
@@ -106,6 +109,10 @@ See [DISCLAIMER.md](DISCLAIMER.md). In short:
 - Everything is based on **specific machines and versions**; other versions may differ in paths, versions, and behavior.
 - The operations described may modify system services, drivers, and the registry — **assess and create a restore point first**.
 - Do not use on other people's devices or in any unauthorized context.
+
+## AI disclosure
+
+This project contains no human ingredients. AI assisted with analysis and drafting. The maintainer supplied the device evidence, reviewed the findings and approved publication. [Full disclosure](DISCLAIMER.md#ai-usage-statement).
 
 ## License
 
